@@ -1,6 +1,5 @@
 package util;
 
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -85,13 +84,24 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
         updateList();
         currentList = new ArrayList<>();
         for (SpaceMarine spaceMarine : newList) {
-            // ids.add(spaceMarine.getID());
             compareMaxVariables(spaceMarine.getHealth(), spaceMarine.getCoordinates().getX(), spaceMarine.getCoordinates().getY());
             factor = differenceSize / (maxHealth - minHealth);
         }
     }
     public void printerror(String error) {
-
+        JFrame frame = new JFrame();
+        JButton okButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("OK"));
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                frame.dispose();
+            }
+        });
+        JLabel errorLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString(error));
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+        frame.add(errorLabel);
+        frame.add(okButton);
+        frame.setPreferredSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
+        frame.setVisible(true);
     }
 
     public void compareMaxVariables(int health, double x, long y) {
@@ -162,7 +172,6 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
 
     @Override
     public void paint(Graphics g) {
-
         Graphics2D g2 = (Graphics2D) g;
         g2.translate(Constants.SCREEN_WIDTH / 2, Constants.CENTER_PANEL_HEIGHT / 2);
         g2.setStroke(new BasicStroke(BASIC_STROKE));
@@ -208,8 +217,8 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
                 return;
             }
             color = usersAndColors.get(showingSpaceMarine.spaceMarine.getOwnerName());
-            int teta = MAX_ALPHA - MAX_ALPHA * (COUNTER_MAX - showingSpaceMarine.tic) / COUNTER_MAX;
-            drawSpaceMarine(g2, (int) showingSpaceMarine.spaceMarine.getCoordinates().getX(), showingSpaceMarine.spaceMarine.getCoordinates().getY(), (int) showingSpaceMarine.spaceMarine.getHealth(), color, teta);
+            int gap = (int) (showingSpaceMarine.y - showingSpaceMarine.y * (COUNTER_MAX - showingSpaceMarine.tic) / COUNTER_MAX);
+            drawSpaceMarine(g2, (int) showingSpaceMarine.x, gap, (int) showingSpaceMarine.health, color, MAX_ALPHA);
         }
     }
 
@@ -237,7 +246,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
             movingSpaceMarine.tic--;
             movingSpaceMarine.x += movingSpaceMarine.deltaX;
             movingSpaceMarine.y += movingSpaceMarine.deltaY;
-            movingSpaceMarine.health += movingSpaceMarine.deltaWingspan;
+            movingSpaceMarine.health += movingSpaceMarine.deltaHealth;
             drawSpaceMarine(g2, (int) movingSpaceMarine.x, (long) movingSpaceMarine.y, (int) movingSpaceMarine.health, usersAndColors.get(movingSpaceMarine.spaceMarine.getOwnerName()), MAX_ALPHA);
         }
     }
@@ -333,29 +342,35 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
 
     private static class MovingSpaceMarine {
         private double x;
-        private double y;
+        private long y;
         private final SpaceMarine spaceMarine;
         private double health;
         private int tic = COUNTER_MAX;
         private final double deltaX;
-        private final double deltaY;
-        private final double deltaWingspan;
-
-        MovingSpaceMarine(int x, Long y, int oldWingspan, SpaceMarine spaceMarine) {
-            this.x = x;
-            this.y = y;
+        private final long deltaY;
+        private final double deltaHealth;
+        MovingSpaceMarine(int oldX, long oldY, int oldHealth, SpaceMarine spaceMarine) {
+            this.x = oldX;
+            this.y = oldY;
             this.spaceMarine = spaceMarine;
-            this.health = oldWingspan;
+            this.health = oldHealth;
             this.deltaX = ((spaceMarine.getCoordinates().getX() - x) / COUNTER_MAX);
-            this.deltaY = (spaceMarine.getCoordinates().getY() - y) * 1.0 / COUNTER_MAX;
-            this.deltaWingspan = ((spaceMarine.getHealth() - health) / COUNTER_MAX);
+            this.deltaY = (spaceMarine.getCoordinates().getY() - y) / COUNTER_MAX;
+            this.deltaHealth = ((spaceMarine.getHealth() - health) / COUNTER_MAX);
         }
     }
 
     private static class ShowSpaceMarine {
         private SpaceMarine spaceMarine;
+        private double x;
+        private long y;
+        private double health;
         private int tic = COUNTER_MAX;
         ShowSpaceMarine(SpaceMarine spaceMarine) {
-        }
+            this.x = spaceMarine.getCoordinates().getX();
+            this.y = spaceMarine.getCoordinates().getY();
+            this.spaceMarine = spaceMarine;
+            this.health = spaceMarine.getHealth();
     }
+}
 }

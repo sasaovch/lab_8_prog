@@ -36,8 +36,8 @@ public final class Constants {
     public static final int RIGHT_OF_CENTER_SIZE = SCREEN_WIDTH;
     public static final int ROW_HEIGHT = SCREEN_HEIGHT / 21;
     public static final int BORDER_GAP = 50;
-    public static final Font MAIN_FONT = new Font("Tahoma", Font.PLAIN, SCREEN_HEIGHT / 40);
-    public static final Font SUB_FONT = new Font("Tahoma", Font.PLAIN, SCREEN_HEIGHT / 54);
+    public static final Font MAIN_FONT = new Font(Font.SANS_SERIF,  Font.BOLD, SCREEN_HEIGHT / 30);
+    public static final Font SUB_FONT = new Font(Font.SANS_SERIF,  Font.BOLD, SCREEN_HEIGHT / 40);
 
     public static final String[] LANGUAGES = {"Русский", "Português", "Español", "Català"};
     public static final String DEFAUTL_LANGUAGE = "Русский";

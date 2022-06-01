@@ -83,7 +83,7 @@ public class CommandModeJPanel extends JPanel {
         commandsJComboBox = BasicGUIElementsFabric.createBasicComboBox(commandsBoxString);
         typeOfViewJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("Command Panel"), resourceBundle.getString("Table View"), resourceBundle.getString("Visual View")});
         loyalBoxJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("null"), resourceBundle.getString("true"), resourceBundle.getString("false")});
-        userJButton = BasicGUIElementsFabric.createBasicButton(caeManager.getUsername());
+        userJButton = BasicGUIElementsFabric.createBasicButton("user"/*caeManager.getUsername()*/);
         submitJOperation = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("push"));
 
         centerJPanel = new JPanel();
@@ -106,7 +106,7 @@ public class CommandModeJPanel extends JPanel {
 
         setSettings();
         add(northJPanel, BorderLayout.NORTH);
-        add(centerJPanel, BorderLayout.SOUTH);
+        add(centerJPanel, BorderLayout.CENTER);
     }
 
     private void setSettings() {
@@ -298,17 +298,11 @@ public class CommandModeJPanel extends JPanel {
         northJPanel.setLayout(new FlowLayout(FlowLayout.LEFT, Constants.HGAP, Constants.VGAP));
         northJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
         northJPanel.setMaximumSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
-        northJPanel.setBackground(Color.ORANGE);
 
         centerJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
         centerJPanel.setLayout(new BorderLayout());
-        centerJPanel.setBackground(Color.BLACK);
-
         resultJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
-        resultJPanel.setBackground(Color.BLUE);
-
         argumentJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
-        argumentJPanel.setBackground(Color.GREEN);
 
         chooseCommLabel.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
         commandsJComboBox.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
