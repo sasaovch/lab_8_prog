@@ -4,7 +4,7 @@ import com.ut.common.data.User;
 import com.ut.common.util.BodyCommand;
 import com.ut.common.util.IOManager;
 
-public class ConnectToServerCommand extends Command{
+public class ConnectToServerCommand extends Command {
 
     public ConnectToServerCommand() {
         super("connect_to_server", "connect to server", false);

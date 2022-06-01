@@ -20,7 +20,6 @@ import com.ut.common.commands.CommandManager;
 import com.ut.common.commands.CommandResult;
 import com.ut.common.util.BodyCommand;
 import com.ut.common.util.Message;
-import com.ut.common.util.ResultStatusWorkWithColl;
 import com.ut.server.util.SQLSpMarCollManager;
 import com.ut.server.util.SQLUserManager;
 
@@ -86,21 +85,12 @@ public class ServerApp {
         BodyCommand data = mess.getBodyCommand();
         CommandResult result;
         if (command.requiresAuthen()) {
-            // ResultStatusWorkWithColl authentication = userManager.authenticate(mess.getUser());
-            // switch (authentication) {
-            //     case True : result = command.run(data, mess.getUser());
-            //                 break;
-            //     case False :log.info(mess.getUser().getUsername() + " " + mess.getUser().getAuthenticationStatus()); 
-            //                 result = new CommandResult(command.getName(), null, false, "User verification failed.");
-            //                 break;
-            //     default : result = new CommandResult(command.getName(), null, false, "Database broke down.");
-            // }
-                if (mess.getUser().getAuthenticationStatus()) {
-                    result = command.run(data, mess.getUser());
-                } else {
-                    log.info(mess.getUser().getUsername() + " " + mess.getUser().getAuthenticationStatus()); 
-                    result = new CommandResult(command.getName(), null, false, "User verification failed.");
-                }
+            if (mess.getUser().getAuthenticationStatus()) {
+                result = command.run(data, mess.getUser());
+            } else {
+                log.info(mess.getUser().getUsername() + " " + mess.getUser().getAuthenticationStatus());
+                result = new CommandResult(command.getName(), null, false, "User verification failed.");
+            }
         } else {
             result = command.run(data, mess.getUser());
         }

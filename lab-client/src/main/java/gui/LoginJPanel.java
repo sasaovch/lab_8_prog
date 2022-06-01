@@ -1,202 +1,153 @@
 package gui;
 
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import com.ut.client.ConnectionAndExecutorManager;
 
-import lombok.extern.slf4j.Slf4j;
+import exeptions.ConnectionLostExeption;
 import util.Constants;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-@Slf4j
 public class LoginJPanel extends JPanel {
-    private final int relativeWidthDisplacementForLanguagesList = Constants.SCREEN_WIDTH / 100;
-    private final int relativeHeightDisplacementForLanguagesList = Constants.SCREEN_HEIGHT / 25; //Константы, управляющие размерами объектов и зависящие от размера экрана
-    private final int relativeWidthDisplacementForTextFields = Constants.SCREEN_WIDTH * 8 / 10;
-    private final int relativeHeightDisplacementForTextFields = Constants.SCREEN_HEIGHT / 20;
-
-    private final JPanel languageListPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, relativeWidthDisplacementForLanguagesList, relativeHeightDisplacementForLanguagesList));
-    private final JPanel loginTextPanel = new JPanel(new BorderLayout());
-    private final JPanel loginTextFielPanel = new JPanel(new GridBagLayout());
-    private final JPanel passwordPasswordField = new JPanel(new GridBagLayout());
-    private final JPanel passwordTextPanel = new JPanel(new BorderLayout());
-    private final JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, relativeWidthDisplacementForLanguagesList, relativeHeightDisplacementForLanguagesList));
-    private final JPanel errorFieldPanel = new JPanel(new GridBagLayout());
-
-    private JButton loginButton;
-    private JButton signupButton;
-
-    private JLabel usernameText;
-    private JLabel passwordText;
-
-    private JTextField fieldForUsername;
-    private JPasswordField fieldForPassword;
-    private JComboBox<String> listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
-
-    private GUIManager guiManager;
-    private ConnectionAndExecutorManager caeManager;
-    private ResourceBundle resourceBundle;
 
     private static final long serialVersionUID = 1L;
+    private final JPanel listOfLanguagesJPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, Constants.VGAP, Constants.HGAP));
+    private final JPanel loginLabelJPanel = new JPanel();
+    private final JPanel loginTextFieldJPanel = new JPanel();
+    private final JPanel passwordLabelJPanel = new JPanel();
+    private final JPanel passwordTextFieldJPanel = new JPanel();
+    private final JPanel submitButtonJPanel =  new JPanel();
+    private final JPanel errorFieldJPanel = new JPanel();
+
+    private final int numberOfPanels = 7;
+    private final int panelHeight = Constants.SCREEN_HEIGHT / numberOfPanels;
+    private final int panelWidth = Constants.SCREEN_WIDTH;
+
+    private JComboBox<String> listToChooseLanguage;
+    private JLabel loginJLabe;
+    private JTextField loginJTextField;
+    private JLabel passwordJLabel;
+    private JPasswordField passwordJPasswordField;
+    private JButton loginJButton;
+    private JButton signupJButton;
+    private JLabel errorJLabel;
+
+    private final GUIManager guiManager;
+    private final ConnectionAndExecutorManager caeManager;
+    private ResourceBundle resourceBundle;
 
     public LoginJPanel(GUIManager guiManager, ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
         this.guiManager = guiManager;
         this.caeManager = caeManager;
-        this.resourceBundle = resourceBundle;
-        initElement();
-    }
-    
-    private void initElement() {
-        int amountOfPanels = 8;
-
-        listToChooseLanguage.setFont(Constants.MAIN_FONT);
-        listToChooseLanguage.setBackground(Constants.SUB_COLOR);
-        listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
-
-        setSettingForLanguagesList();
-
-        languageListPanel.add(listToChooseLanguage);
-        languageListPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT / amountOfPanels));
-        loginTextPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT / amountOfPanels));
-        loginTextFielPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT / amountOfPanels));
-        passwordTextPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT / amountOfPanels));
-        passwordPasswordField.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT / amountOfPanels));
-        buttonsPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT / amountOfPanels));
-        errorFieldPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT / amountOfPanels));
-        
         setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        initElement();
+    }
 
-        languageListPanel.setBackground(Color.PINK);
-        loginTextFielPanel.setBackground(Color.GREEN);
-        loginTextPanel.setBackground(Color.BLUE);
-        passwordPasswordField.setBackground(Color.BLACK);
-        passwordTextPanel.setBackground(Color.CYAN);
-        buttonsPanel.setBackground(Color.MAGENTA);
-        errorFieldPanel.setBackground(Color.ORANGE);
+    private void initElement() {
+        listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
+        listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
+        setSettingForLanguagesList();
+        listOfLanguagesJPanel.add(listToChooseLanguage);
+        listOfLanguagesJPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+        loginLabelJPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+        loginTextFieldJPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+        passwordLabelJPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+        passwordTextFieldJPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+        submitButtonJPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+        errorFieldJPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
-        add(languageListPanel);
-        add(loginTextPanel);
-        add(loginTextFielPanel);
-        add(passwordTextPanel);
-        add(passwordPasswordField);
-        add(buttonsPanel);
-        add(errorFieldPanel);
+        add(listOfLanguagesJPanel);
+        add(loginLabelJPanel);
+        add(loginTextFieldJPanel);
+        add(passwordLabelJPanel);
+        add(passwordTextFieldJPanel);
+        add(submitButtonJPanel);
+        add(errorFieldJPanel);
 
-        usernameText = new JLabel(resourceBundle.getString("LOGIN"), SwingConstants.CENTER);
-        usernameText.setFont(Constants.MAIN_FONT);
-        loginTextPanel.add(usernameText, BorderLayout.CENTER);
-
-        fieldForUsername = createCenteredJField();
-        loginTextFielPanel.add(fieldForUsername);
-
-        passwordText = new JLabel(resourceBundle.getString("PASSWORD"), SwingConstants.CENTER);
-        passwordText.setFont(Constants.MAIN_FONT);
-        passwordTextPanel.add(passwordText, BorderLayout.CENTER);
-        
-        fieldForPassword = createPasswordField();
-        passwordPasswordField.add(fieldForPassword);
-
-        loginButton = BasicGUIElementsFabric.createBasicButton("login"/*currentBundle.getString(textOfTheFirstButton)*/);
-        loginButton.setFont(Constants.MAIN_FONT);
+        loginJLabe = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Eneter your username"));
+        loginLabelJPanel.add(loginJLabe, BorderLayout.CENTER);
+        loginJTextField = BasicGUIElementsFabric.createBasicJTextField();
+        loginTextFieldJPanel.add(loginJTextField);
+        passwordJLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Eneter your password"));
+        passwordLabelJPanel.add(passwordJLabel, BorderLayout.CENTER);
+        passwordJPasswordField = BasicGUIElementsFabric.createBasicJPasswordFiled();
+        passwordTextFieldJPanel.add(passwordJPasswordField);
+        loginJButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("Log In"));
         setListenerForLoginButton();
-        buttonsPanel.add(loginButton);
-        
-        signupButton = BasicGUIElementsFabric.createBasicButton("signup"/*currentBundle.getString(textOfTheFirstButton)*/);
-        signupButton.setFont(Constants.MAIN_FONT);
+        submitButtonJPanel.add(loginJButton);
+        signupJButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("Sign Up"));
         setListenerForSignUpButton();
-        buttonsPanel.add(signupButton);
+        submitButtonJPanel.add(signupJButton);
     }
 
     private void setSettingForLanguagesList() {
         listToChooseLanguage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                log.info("Change language");
                 resourceBundle = Constants.getBundleFromLanguageName(listToChooseLanguage.getSelectedItem().toString());
                 guiManager.showLoginPanel(resourceBundle);
             }
         });
     }
 
-    public JTextField createCenteredJField() {
-        JTextField jTextField = new JTextField(SwingConstants.CENTER);
-        jTextField.setFont(Constants.MAIN_FONT);
-        jTextField.setPreferredSize(new Dimension(relativeWidthDisplacementForTextFields, relativeHeightDisplacementForTextFields));
-        jTextField.setMinimumSize(new Dimension(relativeWidthDisplacementForTextFields, relativeHeightDisplacementForTextFields));
-        jTextField.setMaximumSize(new Dimension(relativeWidthDisplacementForTextFields, relativeHeightDisplacementForTextFields));
-        jTextField.setBorder(BorderFactory.createLineBorder(Constants.MAIN_COLOR, 3));
-        return jTextField;
-    }
-    public JPasswordField createPasswordField() {
-        JPasswordField jPasswordField = new JPasswordField(SwingConstants.CENTER);
-        jPasswordField.setFont(Constants.MAIN_FONT);
-        jPasswordField.setPreferredSize(new Dimension(relativeWidthDisplacementForTextFields, relativeHeightDisplacementForTextFields));
-        jPasswordField.setMinimumSize(new Dimension(relativeWidthDisplacementForTextFields, relativeHeightDisplacementForTextFields));
-        jPasswordField.setMaximumSize(new Dimension(relativeWidthDisplacementForTextFields, relativeHeightDisplacementForTextFields));
-        jPasswordField.setBorder(BorderFactory.createLineBorder(Constants.MAIN_COLOR, 3));
-        return jPasswordField;
-    }
-
     private void printError(String error) {
-        JLabel jLabel = new JLabel();
-        jLabel.setText(error);
-        jLabel.setFont(Constants.MAIN_FONT);
-        jLabel.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
-
-        errorFieldPanel.removeAll();
-        errorFieldPanel.add(jLabel);
-
+        errorJLabel = BasicGUIElementsFabric.createBasicLabel(error);
+        errorFieldJPanel.removeAll();
+        errorFieldJPanel.add(errorJLabel);
         guiManager.reloadMainScreen();
     }
 
     private void setListenerForLoginButton() {
-        loginButton.addActionListener(new ActionListener() {
+        loginJButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = fieldForUsername.getText();
-                String password = fieldForPassword.getSelectedText();
-                boolean answer = caeManager.login(username, password);
-
-                if (!answer) {
-                    printError("Error");
-                } else {
-                    guiManager.showTablePanel(resourceBundle);
+            public void actionPerformed(ActionEvent event) {
+                String username = loginJTextField.getText();
+                String password = passwordJPasswordField.getText();
+                try {
+                    boolean answer = caeManager.login(username, password);
+                    if (!answer) {
+                        printError(resourceBundle.getString("Login or password is incorrect"));
+                    } else {
+                        guiManager.showTablePanel(resourceBundle);
+                    }
+                } catch (ConnectionLostExeption e) {
+                    printError(resourceBundle.getString("Error to connect to server"));
                 }
-
             }
         });
-    }   
-    
+    }
+
     private void setListenerForSignUpButton() {
-        signupButton.addActionListener(new ActionListener() {
+        signupJButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = fieldForUsername.getText();
-                String password = fieldForPassword.getSelectedText();
-                boolean answer = caeManager.signup(username, password);
-                
-                if (!answer) {
-                    printError("Error");
-                } else {
-                    guiManager.showTablePanel(resourceBundle);
+            public void actionPerformed(ActionEvent event) {
+                String username = loginJTextField.getText();
+                String password = passwordJPasswordField.getText();
+                try {
+                    boolean answer = caeManager.signup(username, password);
+                    if (!answer) {
+                        printError(resourceBundle.getString("This username is already used"));
+                    } else {
+                        guiManager.showTablePanel(resourceBundle);
+                    }
+                } catch (ConnectionLostExeption e) {
+                    printError(resourceBundle.getString("Error to connect to server"));
                 }
             }
         });

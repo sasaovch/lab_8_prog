@@ -9,12 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.ut.common.data.AstartesCategory;
-
-/**
- * util class that contains some realisations of StringConverter
- */
-
 public final class StringConverterRealisation {
     private StringConverterRealisation() {
         throw new UnsupportedOperationException("This is an utility class and can not be instantiated");
@@ -40,13 +34,4 @@ public final class StringConverterRealisation {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
         return numberFormat.format(number);
     }
-
-    public static String booleanFormat(Boolean value, Locale locale) {
-        return "";
-    }
-    public static String categoryFormat(AstartesCategory category, Locale locale) {
-        return "HELIX";
-    }
-
-
 }

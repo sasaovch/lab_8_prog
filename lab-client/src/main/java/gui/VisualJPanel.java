@@ -10,45 +10,31 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 
 import com.ut.client.ConnectionAndExecutorManager;
 
-import lombok.extern.slf4j.Slf4j;
 import util.Constants;
-import util.CoordinatesDemo;
+import util.CoordinatesGraphics;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 
-@Slf4j
 public class VisualJPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    
+
     private JComboBox<String> typeOfView;
     private JComboBox<String> listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
 
-    private JButton userButton;
-    private JButton reloadButton;
-    
+    private JButton userJButton;
+    private JButton reloadJButton;
+
     private JPanel northPanel;
     private JPanel centerPanel;
 
@@ -56,7 +42,7 @@ public class VisualJPanel extends JPanel {
     private ResourceBundle resourceBundle;
     private ConnectionAndExecutorManager caeManager;
 
-    private CoordinatesDemo coordinatesDemo;
+    private CoordinatesGraphics coordinatesGraphics;
 
     public VisualJPanel(GUIManager guiManager, ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
@@ -65,24 +51,25 @@ public class VisualJPanel extends JPanel {
         setLayout(new BorderLayout());
         initElements();
     }
-    
+
     public void initElements() {
 
-        typeOfView = BasicGUIElementsFabric.createBasicComboBox(new String[]{"Visual View", "Table View",  "Command Panel"});
+        typeOfView = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("Visual View"), resourceBundle.getString("Command Panel"), resourceBundle.getString("Table View")});
 
-        userButton = BasicGUIElementsFabric.createBasicButton("username");
-        reloadButton = BasicGUIElementsFabric.createBasicButton("reload");
-    
+        userJButton = BasicGUIElementsFabric.createBasicButton(caeManager.getUsername());
+        reloadJButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("reload"));
+
         centerPanel = new JPanel();
         northPanel = new JPanel();
+
         listToChooseLanguage.setFont(Constants.MAIN_FONT);
         listToChooseLanguage.setBackground(Constants.SUB_COLOR);
         listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
-    
+
+        setSettingsForElements();
         setListenerForReloadButton();
         setListenerForTypeOfViewBox();
         setListenerForUserButton();
-        setSettingsForElements();
         setSettingForLanguagesList();
         addElementsToNorthPanel();
         add(northPanel, BorderLayout.NORTH);
@@ -91,14 +78,13 @@ public class VisualJPanel extends JPanel {
     }
 
     public void setListenerForUserButton() {
-        userButton.addActionListener(new ActionListener() {
+        userJButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                log.info("In userButton action");
                 JFrame exitFrame = new JFrame();
                 JPanel panel = new JPanel();
-                JButton yesButton = new JButton("yes");
-                JButton noButton = new JButton("no");
-                JLabel label = new JLabel("Do you want exit?");
+                JButton yesButton = new JButton(resourceBundle.getString("YES"));
+                JButton noButton = new JButton(resourceBundle.getString("NO"));
+                JLabel label = new JLabel(resourceBundle.getString("Do you want exit?"));
                 yesButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         exitFrame.dispose();
@@ -114,7 +100,7 @@ public class VisualJPanel extends JPanel {
                 panel.add(noButton);
                 panel.add(label);
                 exitFrame.add(panel);
-                exitFrame.setSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
+                exitFrame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
                 exitFrame.setVisible(true);
             }
         });
@@ -123,11 +109,9 @@ public class VisualJPanel extends JPanel {
     public void setListenerForTypeOfViewBox() {
         typeOfView.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if ("Table View".equals(typeOfView.getSelectedItem().toString())) {
-                    log.info("Choosed Table View");
+                if (resourceBundle.getString("Table View").equals(typeOfView.getSelectedItem().toString())) {
                     guiManager.showTablePanel(resourceBundle);
-                } else if ("Command Panel".equals(typeOfView.getSelectedItem().toString())) {
-                    log.info("Choosed Command Panel");
+                } else if (resourceBundle.getString("Command Panel").equals(typeOfView.getSelectedItem().toString())) {
                     guiManager.showCommandPanel(resourceBundle);
                 }
             }
@@ -136,9 +120,9 @@ public class VisualJPanel extends JPanel {
 
     public void addElementsToNorthPanel() {
         northPanel.add(typeOfView);
-        northPanel.add(reloadButton);
+        northPanel.add(reloadJButton);
         northPanel.add(listToChooseLanguage);
-        northPanel.add(userButton);
+        northPanel.add(userJButton);
     }
 
     private void setSettingsForElements() {
@@ -147,30 +131,28 @@ public class VisualJPanel extends JPanel {
         northPanel.setBackground(Color.PINK);
 
         centerPanel.setBackground(Color.BLUE);
-        // centerPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
         centerPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
 
         typeOfView.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
         listToChooseLanguage.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
 
-        userButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        reloadButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        userJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        reloadJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
         }
 
     private void setListenerForReloadButton() {
-        reloadButton.addActionListener(new ActionListener() {
+        reloadJButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 printGraphics();
             }
         });
     }
-   
+
     private void setSettingForLanguagesList() {
         listToChooseLanguage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                log.info("Change language");
                 resourceBundle = Constants.getBundleFromLanguageName(listToChooseLanguage.getSelectedItem().toString());
                 guiManager.showVisualPanel(resourceBundle);
             }
@@ -179,11 +161,9 @@ public class VisualJPanel extends JPanel {
 
 
     public void printGraphics() {
-        coordinatesDemo = new CoordinatesDemo(this, guiManager, caeManager);
+        coordinatesGraphics = new CoordinatesGraphics(caeManager, resourceBundle);
         centerPanel.removeAll();
-        setSettingForLanguagesList();
-        centerPanel.add(coordinatesDemo);
-        coordinatesDemo.startTimer();
+        centerPanel.add(coordinatesGraphics);
         guiManager.reloadMainScreen();
     }
 }

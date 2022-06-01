@@ -16,7 +16,6 @@ import com.ut.client.ConnectionAndExecutorManager;
 import com.ut.common.commands.CommandResult;
 import com.ut.common.data.SpaceMarine;
 
-import lombok.extern.slf4j.Slf4j;
 import util.Constants;
 
 import java.awt.BorderLayout;
@@ -25,27 +24,28 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.stream.Collectors;
 
-@Slf4j
 public class CommandModeJPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
     private final JFileChooser executeScriptFileChooser = new JFileChooser();
-    private JComboBox<String> commandsBox;
-    private JComboBox<String> typeOfView;
-    private JComboBox<String> listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
-    private JComboBox<String> loyalBox;
 
-    private JButton userButton;
-    private JButton submitOperation;
-    
-    private JPanel northPanel;
-    private JPanel centerPanel;
-    private JPanel argumentPanel;
-    private JPanel resultPanel;
+    private JComboBox<String> commandsJComboBox;
+    private JComboBox<String> typeOfViewJComboBox;
+    private JComboBox<String> listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
+    private JComboBox<String> loyalBoxJComboBox;
+
+    private JButton userJButton;
+    private JButton submitJOperation;
+
+    private JPanel northJPanel;
+    private JPanel centerJPanel;
+    private JPanel argumentJPanel;
+    private JPanel resultJPanel;
 
     private AddJPanel addJPanel;
 
@@ -55,8 +55,8 @@ public class CommandModeJPanel extends JPanel {
     private JTextArea textResult;
     private JScrollPane scrollText;
 
-// TODO Is it good to initialize field in this;
-    
+// TODO Is it good to initialize field here?;
+
     private GUIManager guiManager;
     private ConnectionAndExecutorManager caeManager;
     private ResourceBundle resourceBundle;
@@ -68,30 +68,28 @@ public class CommandModeJPanel extends JPanel {
         setLayout(new BorderLayout());
         initElements();
     }
-    
+
     public void initElements() {
-        chooseCommLabel = BasicGUIElementsFabric.createBasicLabel("Choose command");
+        chooseCommLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Choose command"));
         resultOfCommandWithSpMar = BasicGUIElementsFabric.createBasicLabel("");
 
-        Set<String> commandsBoxList = caeManager.getCommandManager().getMap().keySet();
+        List<String> commandsBoxList = caeManager.getCommendsForGUI().stream().map(resourceBundle::getString).collect(Collectors.toList());
         String[] commandsBoxString = new String[commandsBoxList.size()];
         int i = 0;
         for (String command : commandsBoxList) {
             commandsBoxString[i] = command;
             i++;
         }
+        commandsJComboBox = BasicGUIElementsFabric.createBasicComboBox(commandsBoxString);
+        typeOfViewJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("Command Panel"), resourceBundle.getString("Table View"), resourceBundle.getString("Visual View")});
+        loyalBoxJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("null"), resourceBundle.getString("true"), resourceBundle.getString("false")});
+        userJButton = BasicGUIElementsFabric.createBasicButton(caeManager.getUsername());
+        submitJOperation = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("push"));
 
-        commandsBox = BasicGUIElementsFabric.createBasicComboBox(commandsBoxString);
-        typeOfView = BasicGUIElementsFabric.createBasicComboBox(new String[]{"Command Panel", "Table View", "Visual View"});
-        loyalBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{"NULL", "TRUE", "FALSE"});
-
-        userButton = BasicGUIElementsFabric.createBasicButton("username");
-        submitOperation = BasicGUIElementsFabric.createBasicButton("push");
-    
-        centerPanel = new JPanel();
-        northPanel = new JPanel();
-        resultPanel = new JPanel();
-        argumentPanel = new JPanel();
+        centerJPanel = new JPanel();
+        northJPanel = new JPanel();
+        resultJPanel = new JPanel();
+        argumentJPanel = new JPanel();
 
         argumentTextField = BasicGUIElementsFabric.createBasicJTextField();
 
@@ -102,12 +100,16 @@ public class CommandModeJPanel extends JPanel {
         textResult.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
         scrollText = new JScrollPane(textResult);
-        scrollText.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH  / 7 * 6, Constants.CENTER_PANEL_HEIGHT / 7 * 5));
-        scrollText.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
-        argumentPanel.add(scrollText);
+        scrollText.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
+        scrollText.setBorder(BorderFactory.createEmptyBorder(Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP));
+        argumentJPanel.add(scrollText);
 
-        addJPanel = new AddJPanel(caeManager, resourceBundle);
-    
+        setSettings();
+        add(northJPanel, BorderLayout.NORTH);
+        add(centerJPanel, BorderLayout.SOUTH);
+    }
+
+    private void setSettings() {
         setListenerForCommandsBox();
         setSettingsForElements();
         setListenerForUserButton();
@@ -118,15 +120,12 @@ public class CommandModeJPanel extends JPanel {
         addElementsToNorthPanel();
         addElementsToCenterPanel();
         setListenerForTypeOfViewBox();
-        add(northPanel, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.SOUTH);
     }
 
     private void setSettingForLanguagesList() {
         listToChooseLanguage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                log.info("Change language");
                 resourceBundle = Constants.getBundleFromLanguageName(listToChooseLanguage.getSelectedItem().toString());
                 guiManager.showTablePanel(resourceBundle);
             }
@@ -143,16 +142,17 @@ public class CommandModeJPanel extends JPanel {
     }
 
     public void setListenerForUserButton() {
-        userButton.addActionListener(new ActionListener() {
+        userJButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                log.info("In userButton action");
+                resultJPanel.removeAll();
                 JFrame exitFrame = new JFrame();
                 JPanel panel = new JPanel();
-                JButton yesButton = new JButton("yes");
-                JButton noButton = new JButton("no");
-                JLabel label = new JLabel("Do you want exit?");
+                JButton yesButton = new JButton(resourceBundle.getString("YES"));
+                JButton noButton = new JButton(resourceBundle.getString("NO"));
+                JLabel label = new JLabel(resourceBundle.getString("Do you want exit?"));
                 yesButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
+                        exitFrame.dispose();
                         guiManager.showLoginPanel(resourceBundle);
                     }
                 });
@@ -165,144 +165,118 @@ public class CommandModeJPanel extends JPanel {
                 panel.add(noButton);
                 panel.add(label);
                 exitFrame.add(panel);
-                exitFrame.setSize(new Dimension(Constants.SCREEN_WIDTH / 4, Constants.SCREEN_HEIGHT / 4));
+                exitFrame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
                 exitFrame.setVisible(true);
             }
         });
     }
 
     private void setListenerForCommandsBox() {
-        commandsBox.addActionListener(new ActionListener() {
+        commandsJComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                log.info("in Command box Action");
-                if ("add".equals(commandsBox.getSelectedItem().toString()) || "add_if_min".equals(commandsBox.getSelectedItem().toString()) 
-                    || "remove_greater".equals(commandsBox.getSelectedItem().toString()) || "remove_lower".equals(commandsBox.getSelectedItem().toString())
-                    || "update".equals(commandsBox.getSelectedItem().toString())) {
-                    argumentTextField.setEditable(false);
-                    argumentPanel.removeAll();
-                    argumentPanel.add(addJPanel);
-                    northPanel.removeAll();
-                    northPanel.add(chooseCommLabel);
-                    northPanel.add(commandsBox);
-                    northPanel.add(submitOperation);
-                    northPanel.add(argumentTextField);
-                    northPanel.add(typeOfView);
-                    northPanel.add(listToChooseLanguage);
-                    northPanel.add(userButton);
-                    guiManager.reloadMainScreen();
-                    if ("update".equals(commandsBox.getSelectedItem().toString())) {
-                        argumentTextField.setEditable(true);
-                        log.info("Set text fiel editable");
-                    } 
-                } else if ("execute_script".equals(commandsBox.getSelectedItem().toString())) {
-                    log.info("Execute scti");
-                    northPanel.removeAll();
-                    northPanel.add(chooseCommLabel);
-                    northPanel.add(commandsBox);
-                    northPanel.add(submitOperation);
-                    northPanel.add(executeScriptFileChooser);
-                    northPanel.add(typeOfView);
-                    northPanel.add(listToChooseLanguage);
-                    northPanel.add(userButton);
-                    argumentPanel.removeAll();
-                    argumentPanel.add(scrollText);
-                    guiManager.reloadMainScreen();
-                } else if ("count_by_loyal".equals(commandsBox.getSelectedItem().toString())) {
-                    northPanel.removeAll();
-                    northPanel.add(chooseCommLabel);
-                    northPanel.add(commandsBox);
-                    northPanel.add(submitOperation);
-                    northPanel.add(loyalBox);
-                    northPanel.add(typeOfView);
-                    northPanel.add(listToChooseLanguage);
-                    northPanel.add(userButton);
-                    argumentPanel.removeAll();
-                    argumentPanel.add(scrollText);
-                    guiManager.reloadMainScreen();
+                resultJPanel.removeAll();
+                northJPanel.removeAll();
+                northJPanel.add(chooseCommLabel);
+                northJPanel.add(commandsJComboBox);
+                northJPanel.add(submitJOperation);
+                argumentJPanel.removeAll();
+                if (resourceBundle.getString("add").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("add_if_min").equals(commandsJComboBox.getSelectedItem().toString())
+                    || resourceBundle.getString("remove_greater").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_lower").equals(commandsJComboBox.getSelectedItem().toString())
+                    || resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString())) {
+                        if (resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString())) {
+                            argumentTextField.setEditable(true);
+                            northJPanel.add(argumentTextField);
+                        } else {
+                            argumentTextField.setEditable(false);
+                        }
+                    argumentJPanel.add(new AddJPanel(caeManager, resourceBundle));
+                } else if (resourceBundle.getString("execute_script").equals(commandsJComboBox.getSelectedItem().toString())) {
+                    argumentJPanel.add(executeScriptFileChooser);
+                } else if (resourceBundle.getString("count_by_loyal").equals(commandsJComboBox.getSelectedItem().toString())) {
+                    argumentJPanel.add(scrollText);
+                    northJPanel.add(loyalBoxJComboBox);
                 } else {
-                    log.info("Comon help, info");
-                    if ("remove_by_id".equals(commandsBox.getSelectedItem().toString())) {
+                    if (resourceBundle.getString("remove_by_id").equals(commandsJComboBox.getSelectedItem().toString())) {
                         argumentTextField.setEditable(true);
-                        log.info("Set text fiel editable");
+                    } else {
+                        argumentTextField.setEditable(false);
                     }
-                    argumentTextField.setEditable(false);
-                    northPanel.removeAll();
-                    northPanel.add(chooseCommLabel);
-                    northPanel.add(commandsBox);
-                    northPanel.add(submitOperation);
-                    northPanel.add(argumentTextField);
-                    northPanel.add(typeOfView);
-                    northPanel.add(listToChooseLanguage);
-                    northPanel.add(userButton);
-                    argumentPanel.removeAll();
-                    argumentPanel.add(scrollText);
-                    guiManager.reloadMainScreen();
+                    argumentJPanel.add(scrollText);
+                    northJPanel.add(argumentTextField);
                 }
+                northJPanel.add(typeOfViewJComboBox);
+                northJPanel.add(listToChooseLanguage);
+                northJPanel.add(userJButton);
+                guiManager.reloadMainScreen();
             }
         });
     }
 
+    private String findRightCommand() {
+        String commandChoosed = commandsJComboBox.getSelectedItem().toString();
+        String commandToExecute = "";
+        for (String commandName : resourceBundle.keySet()) {
+            if (commandChoosed.equals(resourceBundle.getString(commandName))) {
+                commandToExecute = commandName;
+                break;
+            }
+        }
+        return commandToExecute;
+    }
+
     private void setListenerForSubmitButton() {
-        submitOperation.addActionListener(new ActionListener() {
-            @Override
+        submitJOperation.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if ("add".equals(commandsBox.getSelectedItem().toString()) || "add_if_min".equals(commandsBox.getSelectedItem().toString()) 
-                || "remove_greater".equals(commandsBox.getSelectedItem().toString()) || "remove_lower".equals(commandsBox.getSelectedItem().toString())
-                || "update".equals(commandsBox.getSelectedItem().toString())) {
-                    log.info("Try to show addJPanel");
-                    SpaceMarine spMar = addJPanel.getSpaceMarine();
+                resultJPanel.removeAll();
+                SpaceMarine spMar = null;
+                String commandToExecute = findRightCommand();
+                if (resourceBundle.getString("add").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("add_if_min").equals(commandsJComboBox.getSelectedItem().toString())
+                || resourceBundle.getString("remove_greater").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_lower").equals(commandsJComboBox.getSelectedItem().toString())
+                || resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString())) {
+                    spMar = addJPanel.getSpaceMarine();
                     if (spMar == null) {
-                        printError("Invalid arguments");
+                        printError(resourceBundle.getString("Invalid arguments"));
                         return;
                     }
-                    CommandResult result = caeManager.executeCommand(commandsBox.getSelectedItem().toString(), spMar, null);
+                    CommandResult result = caeManager.executeCommand(commandToExecute, spMar, null);
                     resultOfCommandWithSpMar.setText(result.getMessageResult());
-                    guiManager.reloadMainScreen();
-                } else if ("update".equals(commandsBox.getSelectedItem().toString()) || "remove_by_id".equals(commandsBox.getSelectedItem().toString())) {
+                } else if (resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_by_id").equals(commandsJComboBox.getSelectedItem().toString())) {
                     try {
                         Long id = Long.parseLong(argumentTextField.getText());
-                        SpaceMarine spMar = addJPanel.getSpaceMarine();
-                        CommandResult result = caeManager.executeCommand(commandsBox.getSelectedItem().toString(), spMar, id);
+                        CommandResult result = caeManager.executeCommand(commandToExecute, spMar, id);
                         resultOfCommandWithSpMar.setText(result.getMessageResult());
-                        guiManager.reloadMainScreen();
                     } catch (NumberFormatException exception) {
-                        printError("Invalid value for id");
+                        printError(resourceBundle.getString("Invalid value for id"));
                     }
-                    log.info("Update SpaceMarine window");
-                    return;
-                } else if ("count_by_loyal".equals(commandsBox.getSelectedItem().toString())) {
-                    String loyal = loyalBox.getSelectedItem().toString();
+                } else if (resourceBundle.getString("count_by_loyal").equals(commandsJComboBox.getSelectedItem().toString())) {
                     Boolean loyalPars;
-                    switch (loyal) {
-                        case("TRUE") : loyalPars = true;
-                                break;
-                        case("FALSE") : loyalPars = false;
-                                break;
-                        default : loyalPars = null;
+                    String loyal = loyalBoxJComboBox.getSelectedItem().toString();
+                    if (resourceBundle.getString("null").equals(loyal)) {
+                        loyalPars = null;
+                    } else {
+                        loyalPars = Boolean.parseBoolean(loyal);
                     }
-                    CommandResult result = caeManager.executeCommand("count_by_loyal", null, loyalPars);
-                    showResultOfExecuteCommand(result);
+                    showResultOfExecuteCommand(caeManager.executeCommand("count_by_loyal", null, loyalPars));
                 } else {
-                    showResultOfExecuteCommand(caeManager.executeCommand(commandsBox.getSelectedItem().toString(), null, null));
+                    showResultOfExecuteCommand(caeManager.executeCommand(commandToExecute, null, null));
                 }
+                guiManager.reloadMainScreen();
             }
         });
     }
 
     private void printError(String message) {
         resultOfCommandWithSpMar.setText(message);
-        resultPanel.add(resultOfCommandWithSpMar);
+        resultJPanel.add(resultOfCommandWithSpMar);
         guiManager.reloadMainScreen();
-    }  
+    }
 
     public void setListenerForTypeOfViewBox() {
-        typeOfView.addActionListener(new ActionListener() {
+        typeOfViewJComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if ("Visual View".equals(typeOfView.getSelectedItem().toString())) {
-                    log.info("Choosed Visual View");
+                if (resourceBundle.getString("Visual View").equals(typeOfViewJComboBox.getSelectedItem().toString())) {
                     guiManager.showVisualPanel(resourceBundle);
-                } else if ("Table View".equals(typeOfView.getSelectedItem().toString())) {
-                    log.info("Choosed Table view");
+                } else if (resourceBundle.getString("Table View").equals(typeOfViewJComboBox.getSelectedItem().toString())) {
                     guiManager.showTablePanel(resourceBundle);
                 }
             }
@@ -311,43 +285,44 @@ public class CommandModeJPanel extends JPanel {
 
 
     public void addElementsToNorthPanel() {
-        northPanel.add(chooseCommLabel);
-        northPanel.add(commandsBox);
-        northPanel.add(submitOperation);
-        northPanel.add(argumentTextField);
-        northPanel.add(typeOfView);
-        northPanel.add(listToChooseLanguage);
-        northPanel.add(userButton);
+        northJPanel.add(chooseCommLabel);
+        northJPanel.add(commandsJComboBox);
+        northJPanel.add(submitJOperation);
+        northJPanel.add(argumentTextField);
+        northJPanel.add(typeOfViewJComboBox);
+        northJPanel.add(listToChooseLanguage);
+        northJPanel.add(userJButton);
     }
 
     private void setSettingsForElements() {
-        northPanel.setLayout(new FlowLayout(FlowLayout.LEFT, Constants.HGAP, Constants.VGAP));
-        northPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH / 8 * 7, Constants.NORTH_PANEL_HEIGHT));
-        northPanel.setBackground(Color.PINK);
+        northJPanel.setLayout(new FlowLayout(FlowLayout.LEFT, Constants.HGAP, Constants.VGAP));
+        northJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
+        northJPanel.setMaximumSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
+        northJPanel.setBackground(Color.ORANGE);
 
-        centerPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH / 8 * 7, Constants.CENTER_PANEL_HEIGHT));
-        centerPanel.setLayout(new BorderLayout());
-        centerPanel.setBackground(Color.BLUE);
+        centerJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
+        centerJPanel.setLayout(new BorderLayout());
+        centerJPanel.setBackground(Color.BLACK);
 
-        resultPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH / 8 * 7, Constants.NORTH_PANEL_HEIGHT / 2));
-        resultPanel.setBackground(Color.MAGENTA);
+        resultJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
+        resultJPanel.setBackground(Color.BLUE);
 
+        argumentJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
+        argumentJPanel.setBackground(Color.GREEN);
 
         chooseCommLabel.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        commandsBox.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        loyalBox.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        commandsJComboBox.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        loyalBoxJComboBox.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
         argumentTextField.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        submitOperation.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        typeOfView.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        submitJOperation.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        typeOfViewJComboBox.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
         listToChooseLanguage.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        userButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        userJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
     }
 
     private void addElementsToCenterPanel() {
-        argumentPanel.setBackground(Color.RED);
-        argumentPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        centerPanel.add(argumentPanel, BorderLayout.CENTER);
-        centerPanel.add(resultPanel, BorderLayout.SOUTH);
+        centerJPanel.add(argumentJPanel, BorderLayout.CENTER);
+        centerJPanel.add(resultJPanel, BorderLayout.SOUTH);
     }
 
     private void showResultOfExecuteCommand(CommandResult commandResult) {
@@ -357,7 +332,7 @@ public class CommandModeJPanel extends JPanel {
     }
 
     private void setSettingsForSortPanel() {
-        submitOperation.addActionListener(new ActionListener() {
+        submitJOperation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             }

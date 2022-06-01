@@ -6,8 +6,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.ut.common.commands.Command;
@@ -20,17 +20,35 @@ import com.ut.common.util.BodyCommandWithSpMar;
 import com.ut.common.util.IOManager;
 import com.ut.common.util.Message;
 
+import exeptions.ConnectionLostExeption;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Getter
 public final class ConnectionAndExecutorManager {
-    private final static int DEFAULT_TIME_OUT = 5000;
+    private static final int DEFAULT_TIME_OUT = 5000;
     private SendManager sendManager;
     private ReceiveManager receiveManager;
     private Message message;
     private final CommandManager commandManager = CommandManager.getDefaultCommandManager(null, null);
+    private final List<String> commendsForGUI = new ArrayList<String>();
+    private List<SpaceMarine> lastListSpaceMarines;
+
+    {
+        commendsForGUI.add("help");
+        commendsForGUI.add("info");
+        commendsForGUI.add("show");
+        commendsForGUI.add("add");
+        commendsForGUI.add("add_if_min");
+        commendsForGUI.add("update");
+        commendsForGUI.add("remove_by_id");
+        commendsForGUI.add("remove_greater");
+        commendsForGUI.add("remove_lower");
+        commendsForGUI.add("group_counting_by_name");
+        commendsForGUI.add("print_descending");
+        commendsForGUI.add("count_by_loyal");
+        commendsForGUI.add("execute_script");
+        commendsForGUI.add("clear");
+    }
 
 
     public boolean connectToServer(String address, String portString) {
@@ -48,7 +66,6 @@ public final class ConnectionAndExecutorManager {
             System.out.println("Uppss... Something with input/output went wrong.");
         }
         return false;
-        // return true;
     }
 
     private boolean tryConnect() throws IOException {
@@ -57,7 +74,7 @@ public final class ConnectionAndExecutorManager {
         return Objects.nonNull(result);
     }
 
-    public boolean login(String username, String password) {
+    public boolean login(String username, String password) throws ConnectionLostExeption {
         try {
             Command command = commandManager.getCommand("login");
             BodyCommand bodyCommand = command.requestBodyCommand(new String[]{username, password}, null);
@@ -67,19 +84,17 @@ public final class ConnectionAndExecutorManager {
             sendManager.sendMessage(message);
             CommandResult result = receiveManager.receiveMessage();
             if (Objects.nonNull(result)) {
-                log.info(result.getResultStatus().toString());
                 message.setUser((User) result.getData());
-                log.info(message.getUser().toString() + " " + message.getUser().getAuthenticationStatus());
                 return result.getResultStatus();
             }
+            throw new ConnectionLostExeption();
         } catch (IOException | NullPointerException e) {
-            log.error(e.getMessage());
-        }
-        // return true;
+            e.printStackTrace();
+       }
         return false;
     }
 
-    public boolean signup(String username, String password) {
+    public boolean signup(String username, String password) throws ConnectionLostExeption {
         try {
             Command command = commandManager.getCommand("sign_up");
             BodyCommand bodyCommand = command.requestBodyCommand(new String[]{username, password}, null);
@@ -89,17 +104,16 @@ public final class ConnectionAndExecutorManager {
             sendManager.sendMessage(message);
             CommandResult result = receiveManager.receiveMessage();
             if (Objects.nonNull(result)) {
-                log.info(result.getResultStatus().toString());
                 message.setUser((User) result.getData());
-                log.info(message.getUser().toString() + " " + message.getUser().getAuthenticationStatus());
                 return result.getResultStatus();
             }
+            throw new ConnectionLostExeption();
         } catch (IOException | NullPointerException e) {
-            log.error(e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }
-    
+
     public CommandResult executeCommand(String nameCommand, SpaceMarine spaceMarine, Object data)  {
         if ("execute_script".equals(nameCommand)) {
             File scriptFile = (File) data;
@@ -111,19 +125,16 @@ public final class ConnectionAndExecutorManager {
                     return console.readNewCommand();
                 }
             } catch (IOException e) {
-
+                e.printStackTrace();
             }
         }
         BodyCommandWithSpMar bodyCommand = new BodyCommandWithSpMar(data, spaceMarine);
         message.setCommand(nameCommand);
         message.setBodyCommand(bodyCommand);
-        log.info(message.getUser().getUsername() + " " + message.getUser().getAuthenticationStatus());
         try {
             sendManager.sendMessage(message);
             CommandResult result = receiveManager.receiveMessage();
             if (Objects.nonNull(result)) {
-                log.info(result.getResultStatus().toString());
-                log.info(result.getMessageResult());
                 return result;
             }
             return new CommandResult("error", null, false, "Connection was lost");
@@ -132,5 +143,28 @@ public final class ConnectionAndExecutorManager {
         }
     }
 
-    // TODO Как лучше: один универсальный метод или на каждую команду свой метод?
+    @SuppressWarnings({"unchecked"})
+    public List<SpaceMarine> getListFromServer() throws ConnectionLostExeption {
+        CommandResult result = executeCommand("show", null, null);
+        if (Objects.isNull(result)) {
+            throw new ConnectionLostExeption();
+        }
+        if (!result.getResultStatus()) {
+            throw new ConnectionLostExeption();
+        }
+        if (Objects.isNull(result.getData())) {
+            lastListSpaceMarines = new ArrayList<>();
+            return new ArrayList<>();
+        }
+        lastListSpaceMarines = (List<SpaceMarine>) result.getData();
+        return (List<SpaceMarine>) result.getData();
+    }
+
+    public List<SpaceMarine> getLastList() {
+        return lastListSpaceMarines;
+    }
+
+    public String getUsername() {
+        return message.getUser().getUsername();
+    }
 }

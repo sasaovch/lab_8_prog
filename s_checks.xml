@@ -81,16 +81,16 @@
         <module name="PackageName"/>
         <module name="ParameterName"/>
         <module name="StaticVariableName"/>
-        <module name="TypeName"/>
-        <module name="ClassTypeParameterName">
+        <!-- <module name="TypeName"/> -->
+        <!-- <module name="ClassTypeParameterName">
             <property name="format" value="^[A-Z]{1,3}$"/>
-        </module>
-        <module name="InterfaceTypeParameterName">
+        </module> -->
+        <!-- <module name="InterfaceTypeParameterName">
             <property name="format" value="^[A-Z]{1,3}$"/>
         </module>
         <module name="MethodTypeParameterName">
             <property name="format" value="^[A-Z]{1,3}$"/>
-        </module>
+        </module> -->
 
         <!-- Checks for imports                              -->
         <!-- See http://checkstyle.sf.net/config_import.html -->

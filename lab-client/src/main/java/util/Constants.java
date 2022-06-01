@@ -1,6 +1,5 @@
 package util;
 
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -12,36 +11,49 @@ import java.util.ResourceBundle;
 import com.ut.common.data.AstartesCategory;
 
 public final class Constants {
-    public static final Color MAIN_COLOR = new Color(0x412C84);
-    public static final Color SUB_COLOR = new Color(0xFFFFFF);
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
+    public static final int LABEL_WIDTH = SCREEN_WIDTH / 2;
+    public static final int LABEL_HEIGHT = SCREEN_HEIGHT / 10;
+    public static final int TEXTFIELD_WIDTH = SCREEN_WIDTH / 4;
+    public static final int TEXTFIELD_HIGHT = SCREEN_HEIGHT / 10;
     public static final int BUTTON_WIDTH = SCREEN_WIDTH / 7;
-    public static final int BUTTON_HEIGHT = SCREEN_HEIGHT / 20;
+    public static final int BUTTON_HEIGHT = SCREEN_HEIGHT / 30;
+    public static final int COMBOX_WIDTH = SCREEN_WIDTH / 7;
+    public static final int COMBOX_HIGHT = SCREEN_HEIGHT / 30;
+    public static final int POPUP_FRAME_WIDTH = SCREEN_WIDTH / 3;
+    public static final int POPUP_FRAME_HIGHT = SCREEN_HEIGHT / 3;
+    public static final int CENTER_PANEL_HEIGHT = SCREEN_HEIGHT;
+    public static final int DATE_CHOOSER_HEIGHT = Constants.SCREEN_HEIGHT / 20;
+    public static final int DATE_CHOOSER_WIDTH = Constants.SCREEN_WIDTH / 10;
+    public static final int CALENDAR_WIDTH = Constants.SCREEN_WIDTH / 5;
+    public static final int CALENDAR_HEIGHT = Constants.SCREEN_HEIGHT / 5;
+    public static final Color MAIN_COLOR = Color.PINK;
+    public static final Color SUB_COLOR = new Color(0xFFFFFF);
     public static final int NORTH_PANEL_HEIGHT = SCREEN_HEIGHT / 5;
-    public static final int CENTER_PANEL_HEIGHT = SCREEN_HEIGHT * 4 / 5;
     public static final int VGAP = SCREEN_HEIGHT / 30;
     public static final int HGAP = SCREEN_WIDTH / 25;
     public static final int RIGHT_OF_CENTER_SIZE = SCREEN_WIDTH;
     public static final int ROW_HEIGHT = SCREEN_HEIGHT / 21;
-    public static final Font MAIN_FONT = new Font("Tahoma", Font.PLAIN, SCREEN_HEIGHT / 27); //при 1080 будет 40 шрифт
-    public static final Font SUB_FONT = new Font("Tahoma", Font.PLAIN, SCREEN_HEIGHT / 54); //в 2 раза поменьше
-    public static final String[] LANGUAGES = {"Русский", "English"};
+    public static final int BORDER_GAP = 50;
+    public static final Font MAIN_FONT = new Font("Tahoma", Font.PLAIN, SCREEN_HEIGHT / 40);
+    public static final Font SUB_FONT = new Font("Tahoma", Font.PLAIN, SCREEN_HEIGHT / 54);
+
+    public static final String[] LANGUAGES = {"Русский", "Português", "Español", "Català"};
+    public static final String DEFAUTL_LANGUAGE = "Русский";
     public static final ResourceBundle RU_BUNDLE = ResourceBundle.getBundle("resources.Resource", new Locale("ru", "RU"));
-    public static final ResourceBundle EN_BUNDLE = ResourceBundle.getBundle("resources.Resource", new Locale("en", "EN"));
-    // public static final ResourceBundle LVA_BUNDLE = ResourceBundle.getBundle("resources.Resource", new Locale("lva", "LVA"));
-    // public static final ResourceBundle MKD_BUNDLE = ResourceBundle.getBundle("resources.Resource", new Locale("mkd", "MKD"));
-    // public static final ResourceBundle ESP_BUNDLE = ResourceBundle.getBundle("resources.Resource", new Locale("esp", "ESP"));
+    public static final ResourceBundle PT_BUNDLE = ResourceBundle.getBundle("resources.Resource", new Locale("pt", "PT"));
+    public static final ResourceBundle ES_BUNDLE = ResourceBundle.getBundle("resources.Resource", new Locale("es", "PR"));
+    public static final ResourceBundle CAT_BUNDLE = ResourceBundle.getBundle("resources.Resource", new Locale("cat", "CAT"));
     public static final HashMap<String, ResourceBundle> LANGUAGES_AND_BUNDLES = new HashMap<>();
     public static final String[] CATEGORY = Arrays.stream(AstartesCategory.values()).map(Enum::toString).toArray(String[]::new);
-    public static final String[] LOYAL = {"TRUE", "FALSE", "NULL"};
 
 
     static {
         LANGUAGES_AND_BUNDLES.put("Русский", RU_BUNDLE);
-        LANGUAGES_AND_BUNDLES.put("English", EN_BUNDLE);
-        // LANGUAGES_AND_BUNDLES.put("Македонски", MKD_BUNDLE);
-        // LANGUAGES_AND_BUNDLES.put("letón", ESP_BUNDLE);
+        LANGUAGES_AND_BUNDLES.put("Português", PT_BUNDLE);
+        LANGUAGES_AND_BUNDLES.put("Español", ES_BUNDLE);
+        LANGUAGES_AND_BUNDLES.put("Català", CAT_BUNDLE);
     }
 
     private Constants() {
@@ -61,6 +73,4 @@ public final class Constants {
         }
         return null;
     }
-
-
 }

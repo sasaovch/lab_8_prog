@@ -3,10 +3,11 @@ package util;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 import com.ut.common.data.SpaceMarine;
 
-public class ParsList {
+public final class ParsList {
     private static final int COLUMNS_NUMBER = 14;
     private static final int ID_INDEX = 0;
     private static final int NAME_INDEX = 1;
@@ -22,7 +23,10 @@ public class ParsList {
     private static final int MARINEC_COUNT_INDEX = 11;
     private static final int WORLD_COUNT_INDEX = 12;
     private static final int OWNER_COUNT_INDEX = 13;
-    public static String[][] parseList(List<SpaceMarine> list, Locale locale) {
+    private ParsList() {
+    }
+    public static String[][] parseList(List<SpaceMarine> list, ResourceBundle resourceBundle) {
+        Locale locale = resourceBundle.getLocale();
         if (Objects.nonNull(list)) {
             String[][] table = new String[list.size()][COLUMNS_NUMBER];
             for (int i = 0; i < list.size(); i++) {
@@ -34,8 +38,8 @@ public class ParsList {
                 table[i][Y_INDEX] = StringConverterRealisation.localeNumber(spaceMarine.getCoordinates().getY(), locale);
                 table[i][HEALTH_INDEX] = StringConverterRealisation.localeNumber(spaceMarine.getHealth(), locale);
                 table[i][HEART_COUNT_INDEX] = StringConverterRealisation.localeNumber(spaceMarine.getHeartCount(), locale);
-                table[i][LOYAL_INDEX] = StringConverterRealisation.booleanFormat(spaceMarine.getLoyal(), locale);
-                table[i][CATEGORY_INDEX] = StringConverterRealisation.categoryFormat(spaceMarine.getCategory(), locale);
+                table[i][LOYAL_INDEX] = resourceBundle.getString(spaceMarine.getLoyal().toString());
+                table[i][CATEGORY_INDEX] = resourceBundle.getString(spaceMarine.getCategory().toString().toLowerCase());
                 if (Objects.isNull(spaceMarine.getChapter())) {
                     table[i][CHAPTER_INDEX] = "";
                     table[i][PARENT_LEGION_INDEX] = "";
@@ -52,7 +56,7 @@ public class ParsList {
             }
             return table;
         }
-        String [][] table = new String[0][];
+        String[][] table = new String[0][];
         return table;
     }
 }

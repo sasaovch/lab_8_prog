@@ -2,6 +2,7 @@ package gui;
 
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -11,130 +12,144 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import com.toedter.calendar.JDateChooser;
 import com.ut.client.ConnectionAndExecutorManager;
-import com.ut.common.commands.CommandResult;
-import com.ut.common.commands.ConnectToServerCommand;
 import com.ut.common.data.SpaceMarine;
 
-import lombok.extern.slf4j.Slf4j;
+import exeptions.ConnectionLostExeption;
 import util.Constants;
+import util.FilterSpaceMarine;
 import util.ParsList;
+import util.SortSpaceMarine;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.function.Function;
 
-@Slf4j
 public class TableViewJPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    
-    private JComboBox<String> sortOrfilterBox;
-    private JComboBox<String> fieldForSOFBox;
-    private JComboBox<String> typeOfSort;
-    private JComboBox<String> typeOfFilter;
-    private JComboBox<String> typeOfView;
-    private JComboBox<String> listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
 
-    private JButton userButton;
-    private JButton submitOperation;
-    
-    private JPanel northPanel;
-    private JPanel centerPanel;
+    private JComboBox<String> sortOrfilterJComboBox;
+    private JComboBox<String> fieldForSOFJComboBox;
+    private JComboBox<String> typeOfSortJComboBox;
+    private JComboBox<String> typeOfFilterJComboBox;
+    private JComboBox<String> typeOfViewJComboBox;
+    private JComboBox<String> listToChooseLanguage;
 
-    private JTextField argumentTextField;
-    private JLabel argumentTextLabel;
-    private JButton submit = new JButton();
+    private JButton userJButton;
+    private JButton submitArgumentJButtonOperationJButon;
+
+    private JPanel northJPanel;
+    private JPanel centerJPanel;
+
+    private JTextField fieldForHours;
+    private JTextField fieldForMinutes;
+    private JTextField fieldForSeconds;
+
+    private JTextField argumentJTextField;
+    private JLabel argumentJLabel;
+    private JButton submitArgumentJButton;
 
 // TODO Is it good to initialize field in this;
-    
+
     private JTable jTable;
+    private JDateChooser jDateChooser;
 
-    private JLabel resultOfOperation = new JLabel();
+    private JComboBox<String> loyaJComboBox;
+    private JComboBox<String> categoryJComboBox;
+    private JLabel resultOfOperationJLabel;
 
-    private String[] columnNames;
+    private String[] tableHeader;
     private List<SpaceMarine> listForTable;
-    private Map<String, Function<SpaceMarine, Object>> sortFieldMap;
 
     private GUIManager guiManager;
     private ResourceBundle resourceBundle;
     private ConnectionAndExecutorManager caeManager;
-    private Locale locale;
 
-    public TableViewJPanel(GUIManager guiManager, ResourceBundle resourceBundle, ConnectionAndExecutorManager caeManager, String[] columnNames, List<SpaceMarine> listForTable, Locale locale) {
+    public TableViewJPanel(GUIManager guiManager, ResourceBundle resourceBundle, ConnectionAndExecutorManager caeManager) {
         this.guiManager = guiManager;
-        this.columnNames = columnNames;
-        this.listForTable = listForTable;
         this.caeManager = caeManager;
         this.resourceBundle = resourceBundle;
-        this.locale = locale;
         setLayout(new BorderLayout());
-
-        sortFieldMap = new HashMap<>();
-        sortFieldMap.put("id", SpaceMarine::getID);
-        sortFieldMap.put("name", SpaceMarine::getName);
-        sortFieldMap.put("creation Time", SpaceMarine::getCreationDateTime);
-        sortFieldMap.put("coordinate X", s -> s.getCoordinates().getX());
-        sortFieldMap.put("coordinate Y", s -> s.getCoordinates().getY());
-        sortFieldMap.put("health", SpaceMarine::getHealth);
-        sortFieldMap.put("heart count", SpaceMarine::getHeartCount);
-        
         initElements();
     }
-    
+
     public void initElements() {
+        centerJPanel = new JPanel();
+        northJPanel = new JPanel();
 
-        sortOrfilterBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{"Sort", "Filter"});
-        fieldForSOFBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{"id", "name", "creation Time", "health", "heart count"});
-        typeOfSort = BasicGUIElementsFabric.createBasicComboBox(new String[]{"increase", "decrease"});
-        typeOfFilter = BasicGUIElementsFabric.createBasicComboBox(new String[]{"equals", "greater", "lower"});
-        typeOfView = BasicGUIElementsFabric.createBasicComboBox(new String[]{"Table View", "Visual View", "Command Panel"});
-        listToChooseLanguage.setFont(Constants.MAIN_FONT);
-        listToChooseLanguage.setBackground(Constants.SUB_COLOR);
+        tableHeader = new String[]{resourceBundle.getString("id"), resourceBundle.getString("name"), resourceBundle.getString("creation Time"), resourceBundle.getString("health"), resourceBundle.getString("heartCount"), resourceBundle.getString("loyal"), resourceBundle.getString("category"), resourceBundle.getString("chapter"), resourceBundle.getString("parentLegion"), resourceBundle.getString("marinesCount"), resourceBundle.getString("world")};
+        sortOrfilterJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("Sort"), resourceBundle.getString("Filter")});
+        fieldForSOFJComboBox = BasicGUIElementsFabric.createBasicComboBox(tableHeader);
+        typeOfSortJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("increase"), resourceBundle.getString("decrease")});
+        typeOfFilterJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("equals"), resourceBundle.getString("greater"), resourceBundle.getString("lower")});
+        typeOfViewJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("Table View"), resourceBundle.getString("Visual View"), resourceBundle.getString("Command Panel")});
+
+        listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
         listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
+        setSettingForLanguagesList();
 
-        userButton = BasicGUIElementsFabric.createBasicButton("username");
-        submitOperation = BasicGUIElementsFabric.createBasicButton("sort");
-    
-        centerPanel = new JPanel();
-        northPanel = new JPanel();
-    
-        setListenerForTypeOfViewBox();
+        userJButton = BasicGUIElementsFabric.createBasicButton(caeManager.getUsername());
+        submitArgumentJButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("filter"));
+
+        submitArgumentJButtonOperationJButon = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("sort"));
+        loyaJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("null"), resourceBundle.getString("true"), resourceBundle.getString("false")});
+        categoryJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("aggressor"), resourceBundle.getString("tactical"), resourceBundle.getString("inceptor"), resourceBundle.getString("helix")});
+
+        jDateChooser = new JDateChooser();
+        jDateChooser.setPreferredSize(new Dimension(Constants.DATE_CHOOSER_WIDTH, Constants.DATE_CHOOSER_HEIGHT));
+        jDateChooser.getJCalendar().setPreferredSize(new Dimension(Constants.CALENDAR_WIDTH, Constants.CALENDAR_HEIGHT));
+        fieldForHours = BasicGUIElementsFabric.createBasicJTextField();
+        fieldForMinutes = BasicGUIElementsFabric.createBasicJTextField();
+        fieldForSeconds = BasicGUIElementsFabric.createBasicJTextField();
+
+        setSettings();
+        addElementsToNorthPanel(typeOfSortJComboBox);
+        add(northJPanel, BorderLayout.NORTH);
+        add(centerJPanel, BorderLayout.CENTER);
+
+        getListOFSpaceMarine();
+        setSettingsForTable();
+        resultOfOperationJLabel = new JLabel();
+        resultOfOperationJLabel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
+        resultOfOperationJLabel.setFont(Constants.SUB_FONT);
+    }
+
+    private void setSettings() {
         setSettingsForElements();
+        setListenerForTypeOfViewBox();
         setListenerForSortOrFilterBox();
         setListenerForUserButton();
         setListenerForSubmitButton();
-        divideCentralPanelIntoSeveralParts();
         setSettingForLanguagesList();
-        addElementsToNorthPanel();
-        add(northPanel, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.CENTER);
-        
-        setSettingsForTable();
-        resultOfOperation = new JLabel();
-        resultOfOperation.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH / 9 * 8, Constants.SCREEN_HEIGHT));
-        resultOfOperation.setFont(Constants.SUB_FONT);
+    }
+
+    public void getListOFSpaceMarine() {
+        try {
+            listForTable = caeManager.getListFromServer();
+        } catch (ConnectionLostExeption e) {
+            printerror(resourceBundle.getString("Error to connect to server"));
+            listForTable = new ArrayList<>();
+        }
     }
 
     public void setListenerForUserButton() {
-        userButton.addActionListener(new ActionListener() {
+        userJButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                log.info("In userButton action");
                 JFrame exitFrame = new JFrame();
                 JPanel panel = new JPanel();
-                JButton yesButton = new JButton("yes");
-                JButton noButton = new JButton("no");
-                JLabel label = new JLabel("Do you want exit?");
+                JButton yesButton = new JButton(resourceBundle.getString("YES"));
+                JButton noButton = new JButton(resourceBundle.getString("NO"));
+                JLabel label = new JLabel(resourceBundle.getString("Do you want exit?"));
                 yesButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         exitFrame.dispose();
@@ -150,172 +165,201 @@ public class TableViewJPanel extends JPanel {
                 panel.add(noButton);
                 panel.add(label);
                 exitFrame.add(panel);
-                exitFrame.setSize(new Dimension(Constants.SCREEN_WIDTH / 9 * 8, Constants.SCREEN_HEIGHT));
+                exitFrame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
                 exitFrame.setVisible(true);
             }
         });
     }
 
     public void setListenerForTypeOfViewBox() {
-        typeOfView.addActionListener(new ActionListener() {
+        typeOfViewJComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if ("Visual View".equals(typeOfView.getSelectedItem().toString())) {
-                    log.info("Choosed Visual View");
+                if (resourceBundle.getString("Visual View").equals(typeOfViewJComboBox.getSelectedItem().toString())) {
                     guiManager.showVisualPanel(resourceBundle);
-                } else if ("Command Panel".equals(typeOfView.getSelectedItem().toString())) {
-                    log.info("Choosed Command Panel");
+                } else if (resourceBundle.getString("Command Panel").equals(typeOfViewJComboBox.getSelectedItem().toString())) {
                     guiManager.showCommandPanel(resourceBundle);
                 }
             }
         });
     }
 
-    public void addElementsToNorthPanel() {
-        northPanel.add(sortOrfilterBox);
-        northPanel.add(fieldForSOFBox);
-        northPanel.add(typeOfSort);
-        northPanel.add(typeOfView);
-        northPanel.add(submitOperation);
-        northPanel.add(listToChooseLanguage);
-        northPanel.add(userButton);
+    public void addElementsToNorthPanel(JComboBox<String> currentFieldForOperationJComboBox) {
+        northJPanel.add(sortOrfilterJComboBox);
+        northJPanel.add(fieldForSOFJComboBox);
+        northJPanel.add(currentFieldForOperationJComboBox);
+        northJPanel.add(typeOfViewJComboBox);
+        northJPanel.add(submitArgumentJButtonOperationJButon);
+        northJPanel.add(listToChooseLanguage);
+        northJPanel.add(userJButton);
     }
 
     private void setSettingsForTable() {
-        centerPanel.removeAll();
-        jTable = new JTable(ParsList.parseList(listForTable, locale), columnNames);
+        centerJPanel.removeAll();
+        jTable = new JTable(ParsList.parseList(listForTable, resourceBundle), tableHeader);
         jTable.setEnabled(false);
         jTable.setVisible(true);
-        jTable.setPreferredScrollableViewportSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE / 8 * 7, Constants.SCREEN_HEIGHT));
-        jTable.setPreferredSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE / 8 * 7, Constants.SCREEN_HEIGHT));
+        jTable.setPreferredScrollableViewportSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE, Constants.SCREEN_HEIGHT));
+        jTable.setPreferredSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE, Constants.SCREEN_HEIGHT));
         jTable.setFont(Constants.SUB_FONT);
         jTable.setRowHeight(Constants.ROW_HEIGHT);
         jTable.getTableHeader().setFont(Constants.SUB_FONT);
         jTable.setFillsViewportHeight(true);
-        centerPanel.add(new JScrollPane(jTable));
-        log.info("relodMainScreen");
+        centerJPanel.add(new JScrollPane(jTable));
     }
 
     private void setSettingsForElements() {
-        northPanel.setLayout(new FlowLayout(FlowLayout.LEFT, Constants.HGAP, Constants.VGAP));
-        northPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
-        northPanel.setBackground(Color.PINK);
+        northJPanel.setLayout(new FlowLayout(FlowLayout.LEFT, Constants.HGAP, Constants.VGAP));
+        northJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
 
-        centerPanel.setBackground(Color.BLUE);
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
-        centerPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH / 8 * 7, Constants.CENTER_PANEL_HEIGHT));
+        centerJPanel.setBorder(BorderFactory.createEmptyBorder(Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP));
+        centerJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
 
-        sortOrfilterBox.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        fieldForSOFBox.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        typeOfSort.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        typeOfView.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        typeOfFilter.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        listToChooseLanguage.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        sortOrfilterJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
+        fieldForSOFJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
+        typeOfSortJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
+        typeOfViewJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
+        typeOfFilterJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
+        listToChooseLanguage.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
 
-        userButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        submitOperation.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        userJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        submitArgumentJButtonOperationJButon.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
         }
 
     public void setListenerForSortOrFilterBox() {
-        sortOrfilterBox.addActionListener(new ActionListener() {
+        sortOrfilterJComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                northPanel.removeAll();
-                String type = sortOrfilterBox.getSelectedItem().toString();
-                log.info("In listener");
-                if ("Sort".equals(type)) {
-                    log.info("In sort listener");
-                    northPanel.add(sortOrfilterBox);
-                    northPanel.add(fieldForSOFBox);
-                    northPanel.add(typeOfSort);
-                    northPanel.add(typeOfView);
-                    northPanel.add(listToChooseLanguage);
-                    submitOperation.setText("sort");
-                    northPanel.add(submitOperation);
-                    northPanel.add(listToChooseLanguage);
-                    northPanel.add(userButton);
+                northJPanel.removeAll();
+                String type = sortOrfilterJComboBox.getSelectedItem().toString();
+                if (resourceBundle.getString("Sort").equals(type)) {
+                    submitArgumentJButtonOperationJButon.setText(resourceBundle.getString("sort"));
+                    addElementsToNorthPanel(typeOfSortJComboBox);
                 } else {
-                    log.info("In filter listener");
-                    northPanel.add(sortOrfilterBox);
-                    northPanel.add(fieldForSOFBox);
-                    northPanel.add(typeOfFilter);
-                    northPanel.add(typeOfView);
-                    northPanel.add(listToChooseLanguage);
-                    submitOperation.setText("input");
-                    northPanel.add(submitOperation);
-                    northPanel.add(listToChooseLanguage);
-                    northPanel.add(userButton);
+                    submitArgumentJButtonOperationJButon.setText(resourceBundle.getString("input"));
+                    addElementsToNorthPanel(typeOfFilterJComboBox);
                 }
                 guiManager.reloadMainScreen();
             }
         });
     }
 
-    private void divideCentralPanelIntoSeveralParts() {
-        centerPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH / 9 * 8, Constants.CENTER_PANEL_HEIGHT));
-    }
-
     private void setListenerForSubmitButton() {
-        submitOperation.addActionListener(new ActionListener() {
+        submitArgumentJButtonOperationJButon.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (submitOperation.getText().equals("input")) {
-                    log.info("Filter operation filtered");
-                    JFrame frame = new JFrame();
-                    JPanel panel = new JPanel();
-                    argumentTextField = BasicGUIElementsFabric.createBasicJTextField();
-                    argumentTextLabel = BasicGUIElementsFabric.createBasicLabel("Enter value of field: " + fieldForSOFBox.getSelectedItem().toString());
-                    submit = BasicGUIElementsFabric.createBasicButton("filter");
-                    submit.addActionListener(new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            String value = (String) argumentTextField.getText();
-                            String field = (String) fieldForSOFBox.getSelectedItem().toString();
-                            String typeFilter = (String) typeOfFilter.getSelectedItem().toString();
-                            CommandResult newCommandResult = caeManager.executeCommand("show", null, null);
-                            if (Objects.isNull(newCommandResult)) {
-                                printerror("Connection lost");
-                            }
-                            listForTable = FilterSpaceMarine.filterList(field, typeFilter, value, (List<SpaceMarine>) newCommandResult.getData());
-                            listForTable.stream().forEach(System.out::println);
-                            setSettingsForTable();
-                            frame.dispose();
-                            guiManager.reloadMainScreen();
-                        }
-                    });
-                    panel.add(argumentTextField);
-                    panel.add(argumentTextLabel);
-                    panel.add(submit);
-                    frame.add(panel);
-                    frame.setSize(new Dimension(Constants.SCREEN_WIDTH / 9 * 8, Constants.SCREEN_HEIGHT));
+                if (resourceBundle.getString("input").equals(submitArgumentJButtonOperationJButon.getText())) {
+                    JFrame frame = createJFrameForFilterInput();
+                    setListenerForArgumentJButton(frame);
                     frame.setVisible(true);
-                }
-                if (submitOperation.getText().equals("sort")) {
-                    String sortField = fieldForSOFBox.getSelectedItem().toString();
-                    String typeSort = typeOfSort.getSelectedItem().toString();
-                    CommandResult newCommandResult = caeManager.executeCommand("show", null, null);
-                    if (Objects.isNull(newCommandResult)) {
-                        printerror("Connection lost");
+                } else {
+                    try {
+                        listForTable = SortSpaceMarine.sortSpaceMarines(findRightName(fieldForSOFJComboBox.getSelectedItem().toString()), findRightName(typeOfSortJComboBox.getSelectedItem().toString()), caeManager.getListFromServer());
+                        listForTable.stream().forEach(System.out::println);
+                        setSettingsForTable();
+                        guiManager.reloadMainScreen();
+                    } catch (ConnectionLostExeption e2) {
+                        printerror(resourceBundle.getString("Error to connect to server"));
+                        listForTable = new ArrayList<>();
+                        setSettingsForTable();
+                        guiManager.reloadMainScreen();
                     }
-                    listForTable = SortSpaceMarine.sortSpaceMarines(sortField, typeSort, (List<SpaceMarine>) newCommandResult.getData());
-                    listForTable.stream().forEach(System.out::println);
+                }
+            }
+        });
+    }
+
+    private JFrame createJFrameForFilterInput() {
+        JPanel panel = new JPanel();
+        argumentJLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Enter value of field: ") + fieldForSOFJComboBox.getSelectedItem().toString());
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(argumentJLabel);
+        if (resourceBundle.getString("loyal").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+            panel.add(loyaJComboBox);
+        } else if (resourceBundle.getString("category").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+            panel.add(categoryJComboBox);
+        } else if (resourceBundle.getString("creation Time").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+            panel.add(jDateChooser);
+            fieldForHours.setText("HH");
+            fieldForMinutes.setText("MM");
+            fieldForSeconds.setText("SS");
+            panel.add(fieldForHours);
+            panel.add(fieldForMinutes);
+            panel.add(fieldForSeconds);
+        } else {
+            argumentJTextField = BasicGUIElementsFabric.createBasicJTextField();
+            panel.add(argumentJTextField);
+        }
+        JFrame frame = new JFrame();
+        panel.add(submitArgumentJButton);
+        frame.add(panel);
+        frame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
+        return frame;
+    }
+
+    private String findRightName(String bundleName) {
+        String rightName = "";
+        for (String key : resourceBundle.keySet()) {
+            if (bundleName.equals(resourceBundle.getString(key))) {
+                rightName = key;
+                break;
+            }
+        }
+        return rightName;
+    }
+
+    private void setListenerForArgumentJButton(JFrame frame) {
+        submitArgumentJButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                String value;
+                if (resourceBundle.getString("loyal").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+                    value = loyaJComboBox.getSelectedItem().toString();
+                } else if (resourceBundle.getString("category").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+                    value = categoryJComboBox.getSelectedItem().toString();
+                } else if (resourceBundle.getString("creation Time").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+                    Calendar calendar = jDateChooser.getCalendar();
+                    try {
+                        int hours = Integer.parseInt(fieldForHours.getText());
+                        int minutes = Integer.parseInt(fieldForMinutes.getText());
+                        int seconds = Integer.parseInt(fieldForSeconds.getText());
+                        Calendar calendarResult = new GregorianCalendar();
+                        calendarResult.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendarResult.get(Calendar.DAY_OF_MONTH), hours, minutes, seconds);
+                        Date result = calendarResult.getTime();
+                        value = result.toString();
+                    } catch (NumberFormatException ee) {
+                        printerror(resourceBundle.getString("NumberFormatException"));
+                        return;
+                    }
+                } else {
+                    value = argumentJTextField.getText();
+                }
+                try {
+                    listForTable = FilterSpaceMarine.filterList(findRightName(fieldForSOFJComboBox.getSelectedItem().toString()), findRightName(typeOfFilterJComboBox.getSelectedItem().toString()), value, caeManager.getListFromServer());
                     setSettingsForTable();
+                    frame.dispose();
+                    guiManager.reloadMainScreen();
+                } catch (ConnectionLostExeption e1) {
+                    printerror(resourceBundle.getString("Error to connect to server"));
+                    listForTable = new ArrayList<>();
+                    setSettingsForTable();
+                    frame.dispose();
                     guiManager.reloadMainScreen();
                 }
             }
         });
     }
 
-    private void printerror(String message) {
-
+    private void printerror(String error) {
+        JLabel errorJLabel = BasicGUIElementsFabric.createBasicLabel(error);
+        errorJLabel = BasicGUIElementsFabric.createBasicLabel(error);
+        resultOfOperationJLabel.removeAll();
+        resultOfOperationJLabel.add(errorJLabel);
+        guiManager.reloadMainScreen();
     }
-   
+
     private void setSettingForLanguagesList() {
         listToChooseLanguage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                log.info("Change language");
                 resourceBundle = Constants.getBundleFromLanguageName(listToChooseLanguage.getSelectedItem().toString());
                 guiManager.showTablePanel(resourceBundle);
             }

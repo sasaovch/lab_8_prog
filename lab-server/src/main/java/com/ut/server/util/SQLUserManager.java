@@ -93,7 +93,7 @@ public class SQLUserManager implements UserManagerInt {
             resUser.next();
             if (resUser.getString("login").equals(user.getUsername())) {
                 usersLoginSet.add(user.getUsername());
-                onlineUser.add(user.getUsername());
+                // onlineUser.add(user.getUsername());
                 return ResultStatusWorkWithColl.True;
             }
             return ResultStatusWorkWithColl.False;
@@ -124,7 +124,7 @@ public class SQLUserManager implements UserManagerInt {
                 String realPasswordHashed = res.getString("password");
                 String passwordHashed = encodeHashWithSalt(user.getPassword(), res.getString("salt"));
                 if (passwordHashed.equals(realPasswordHashed)) {
-                    onlineUser.add(user.getUsername());
+                    // onlineUser.add(user.getUsername());
                     return ResultStatusWorkWithColl.True;
                 }
             } catch (SQLException e) {

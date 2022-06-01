@@ -1,32 +1,36 @@
-package gui;
+package util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Function;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.ut.common.data.SpaceMarine;
 
-public class SortSpaceMarine {
+public final class SortSpaceMarine {
+    private SortSpaceMarine() {
+    }
 
     public static List<SpaceMarine> sortSpaceMarines(String field, String typeFilter, List<SpaceMarine> listSpaceMar) {
         List<SpaceMarine> returnlist;
+        if (Objects.isNull(listSpaceMar)) {
+            return new ArrayList<SpaceMarine>();
+        }
         switch (field) {
             case "id" : returnlist = sortById(listSpaceMar);
                         break;
             case "name" : returnlist = sortByName(listSpaceMar);
+                        break;
+            case "creation Time" : returnlist = sortByCreationTime(listSpaceMar);
                         break;
             case "coordinate x" : returnlist = sortByCoordinateX(listSpaceMar);
                         break;
             case "coordinate y" : returnlist = sortByCoordinateY(listSpaceMar);
                         break;
             case "health" : returnlist = sortByHealth(listSpaceMar);
-                        break;  
+                        break;
             case "heart count" : returnlist = sortByHeartCount(listSpaceMar);
                         break;
             case "loyal" : returnlist = sortByLoyal(listSpaceMar);
@@ -45,7 +49,7 @@ public class SortSpaceMarine {
             Collections.reverse(returnlist);
         }
         return returnlist;
-    }  
+    }
 
     public static List<SpaceMarine> sortById(List<SpaceMarine> listSpaceMar) {
         return listSpaceMar.stream().sorted(Comparator.comparingLong(SpaceMarine::getID)).collect(Collectors.toList());
@@ -53,6 +57,10 @@ public class SortSpaceMarine {
 
     public static List<SpaceMarine> sortByName(List<SpaceMarine> listSpaceMar) {
         return listSpaceMar.stream().sorted(Comparator.comparing(SpaceMarine::getName)).collect(Collectors.toList());
+    }
+
+    public static List<SpaceMarine> sortByCreationTime(List<SpaceMarine> listSpaceMar) {
+        return listSpaceMar.stream().sorted(Comparator.comparing(SpaceMarine::getCreationDateTime)).collect(Collectors.toList());
     }
 
     public static List<SpaceMarine> sortByCoordinateX(List<SpaceMarine> listSpaceMar) {
