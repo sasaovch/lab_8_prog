@@ -245,7 +245,7 @@ public class TableViewJPanel extends JPanel {
             JFrame subFrame = new JFrame();
             JPanel mainPanel = new JPanel();
             JLabel jLabel = basicGUIElementsFabric.createBasicLabel(("It is not your spaceMarine"));
-            subFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            subFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
             mainPanel.add(jLabel);
             JButton exitButton = basicGUIElementsFabric.createBasicButton(("OK"));
@@ -313,7 +313,7 @@ public class TableViewJPanel extends JPanel {
                         setSettingsForTable();
                         guiManager.reloadMainScreen();
                     } catch (ConnectionLostExeption e2) {
-                        printerror(resourceBundle.getString("Error to connect to server"));
+                        printerror("Error to connect to server");
                         listForTable = new ArrayList<>();
                         setSettingsForTable();
                         guiManager.reloadMainScreen();
@@ -325,7 +325,7 @@ public class TableViewJPanel extends JPanel {
 
     private JFrame createJFrameForFilterInput() {
         JPanel panel = new JPanel();
-        argumentJLabel = basicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Enter value of field: ") + fieldForSOFJComboBox.getSelectedItem().toString());
+        argumentJLabel = basicGUIElementsFabric.createBasicLabel(("Enter value of field"));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(argumentJLabel);
         if (resourceBundle.getString("loyal").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
@@ -382,7 +382,7 @@ public class TableViewJPanel extends JPanel {
                         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                         value = dateFormat.format(result);
                     } catch (NumberFormatException ee) {
-                        printerror(resourceBundle.getString("NumberFormatException"));
+                        printerror("NumberFormatException");
                         return;
                     }
                 } else {
@@ -394,13 +394,13 @@ public class TableViewJPanel extends JPanel {
                     frame.dispose();
                     guiManager.reloadMainScreen();
                 } catch (ConnectionLostExeption e1) {
-                    printerror(resourceBundle.getString("Error to connect to server"));
+                    printerror("Error to connect to server");
                     listForTable = new ArrayList<>();
                     setSettingsForTable();
                     frame.dispose();
                     guiManager.reloadMainScreen();
                 } catch (NumberFormatException e2) {
-                    printerror(resourceBundle.getString("Number format is wrong"));
+                    printerror("Number format is wrong");
                     listForTable = new ArrayList<>();
                     setSettingsForTable();
                     frame.dispose();
@@ -411,11 +411,20 @@ public class TableViewJPanel extends JPanel {
     }
 
     private void printerror(String error) {
-        JLabel errorJLabel = basicGUIElementsFabric.createBasicLabel(error);
-        errorJLabel = basicGUIElementsFabric.createBasicLabel(error);
-        resultOfOperationJLabel.removeAll();
-        resultOfOperationJLabel.add(errorJLabel);
-        guiManager.reloadMainScreen();
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
+        JButton okButton = basicGUIElementsFabric.createBasicButton(("OK"));
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                frame.dispose();
+            }
+        });
+        JLabel errorLabel = basicGUIElementsFabric.createBasicLabel((error));
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
+        frame.add(errorLabel, BorderLayout.CENTER);
+        frame.add(okButton, BorderLayout.CENTER);
+        frame.setVisible(true);
     }
 
     private void setSettingForLanguagesList() {

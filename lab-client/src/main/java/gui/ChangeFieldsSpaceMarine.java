@@ -37,7 +37,7 @@ public class ChangeFieldsSpaceMarine extends JFrame {
         this.oldSpaceMarine = spaceMarine;
         basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
         errorJLabe = basicGUIElementsFabric.createBasicLabel("");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setExtendedState(Frame.MAXIMIZED_BOTH);
         setSize(new Dimension(Constants.SCREEN_WIDTH / PART_OF_SCREEN, Constants.SCREEN_HEIGHT / PART_OF_SCREEN));
         initElements();

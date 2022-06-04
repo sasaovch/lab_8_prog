@@ -48,7 +48,7 @@ public class Resource_pt_PT extends ListResourceBundle {
         {"Command Panel", "Painel De Comando"},
         {"sort", "tipo"},
         {"input", "entrada"},
-        {"Enter value of field: ", "Introduza o valor do campo: "},
+        {"Enter value of field", "Introduza o valor do campo"},
         {"filter", "filtro"},
         {"Choose command", "Escolha o comando"},
         {"null", "nulo"},
@@ -106,7 +106,9 @@ public class Resource_pt_PT extends ListResourceBundle {
         {"No element has been deleted.", "Никто не удален"},
         {"Marine has been successfully updated.", "Воин изменен"},
         {"Id is not correct or insufficient access rights.", "Неверный Id или это не ваш воин"},
-        {"Connection lost", "Conexão perdida"}
+        {"Connection lost", "Conexão perdida"},
+        {"Number format is wrong", "Неверный формат"},
+        {"Error to connect to server", "Ошибка подключения к серверу"}
     };
 
     @Override

@@ -81,7 +81,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
 
     public void printerror(String error) {
         JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
         JButton okButton = basicGUIElementsFabric.createBasicButton(("OK"));
         okButton.addActionListener(new ActionListener() {

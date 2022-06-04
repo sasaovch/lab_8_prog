@@ -126,8 +126,7 @@ public class LoginJPanel extends JPanel {
                     if (!answer) {
                         printError(("Login or password is incorrect"));
                     } else {
-                        // guiManager.showTablePanel(resourceBundle);
-                        guiManager.showVisualPanel(resourceBundle);
+                        guiManager.showTablePanel(resourceBundle);
                     }
                 } catch (ConnectionLostExeption e) {
                     printError(("Error to connect to server"));

@@ -46,7 +46,7 @@ public class Resource_cat_CAT extends ListResourceBundle {
         {"Command Panel", "Panell D ' Ordres"},
         {"sort", "sort"},
         {"input", "entrada"},
-        {"Enter value of field: ", "Introduïu el valor del camp: "},
+        {"Enter value of field", "Introduïu el valor del camp"},
         {"filter", "filtre"},
         {"Choose command", "Escolliu ordre"},
         {"null", "null"},
@@ -104,7 +104,9 @@ public class Resource_cat_CAT extends ListResourceBundle {
         {"No element has been deleted.", "Никто не удален"},
         {"Marine has been successfully updated.", "Воин изменен"},
         {"Id is not correct or insufficient access rights.", "Неверный Id или это не ваш воин"},
-        {"Connection lost", "Connexió perduda"}
+        {"Connection lost", "Connexió perduda"},
+        {"Number format is wrong", "Неверный формат"},
+        {"Error to connect to server", "Ошибка подключения к серверу"}
     };
 
 
