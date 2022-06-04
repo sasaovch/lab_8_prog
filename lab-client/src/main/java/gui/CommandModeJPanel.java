@@ -167,9 +167,9 @@ public class CommandModeJPanel extends JPanel {
                 JFrame exitFrame = new JFrame();
                 Container pane = exitFrame.getContentPane();
                 pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-                JButton yesButton = basicGUIElementsFabric.createBasicButton("YES");
+                JButton yesButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.YES);
                 yesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                JButton noButton = basicGUIElementsFabric.createBasicButton("NO");
+                JButton noButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.NO);
                 noButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 JLabel label = basicGUIElementsFabric.createBasicLabel("Do you want exit?");
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);

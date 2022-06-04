@@ -16,11 +16,13 @@ public final class ConstantsLanguage {
     public static final String X = "x";
     public static final String Y = "y";
     public static final String HEALTH = "health";
-    public static final String HEART_COUNT = "heartcount";
+    public static final String HEART_COUNT = "heartCount";
     public static final String LOYAL = "loyal";
     public static final String CATEGORY = "category";
     public static final String CHAPTER = "chapter";
     public static final String PARENT_LEGION = "parentLegion";
     public static final String MARINES_COUNT = "marinesCount";
     public static final String WORLD = "world";
+    public static final String YES = "yes";
+    public static final String NO = "no";
 }

@@ -158,9 +158,9 @@ public class TableViewJPanel extends JPanel {
                 JFrame exitFrame = new JFrame();
                 Container pane = exitFrame.getContentPane();
                 pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-                JButton yesButton = basicGUIElementsFabric.createBasicButton("YES");
+                JButton yesButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.YES);
                 yesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                JButton noButton = basicGUIElementsFabric.createBasicButton("NO");
+                JButton noButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.NO);
                 noButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 JLabel label = basicGUIElementsFabric.createBasicLabel("Do you want exit?");
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -328,9 +328,9 @@ public class TableViewJPanel extends JPanel {
         argumentJLabel = basicGUIElementsFabric.createBasicLabel(("Enter value of field"));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(argumentJLabel);
-        if (resourceBundle.getString("loyal").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+        if (resourceBundle.getString(ConstantsLanguage.LOYAL).equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
             panel.add(loyaJComboBox);
-        } else if (resourceBundle.getString("category").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+        } else if (resourceBundle.getString(ConstantsLanguage.CATEGORY).equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
             panel.add(categoryJComboBox);
         } else if (resourceBundle.getString("creation Time").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
             panel.add(jDateChooser);
@@ -366,9 +366,9 @@ public class TableViewJPanel extends JPanel {
         submitArgumentJButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String value;
-                if (resourceBundle.getString("loyal").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+                if (resourceBundle.getString(ConstantsLanguage.LOYAL).equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
                     value = findRightName(loyaJComboBox.getSelectedItem().toString());
-                } else if (resourceBundle.getString("category").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
+                } else if (resourceBundle.getString(ConstantsLanguage.CATEGORY).equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
                     value = findRightName(categoryJComboBox.getSelectedItem().toString());
                 } else if (resourceBundle.getString("creation Time").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
                     Calendar calendar = jDateChooser.getCalendar();
