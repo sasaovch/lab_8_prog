@@ -46,7 +46,7 @@ public final class Server {
             String dataBaseTable = ParsFromEV.getFromEV("dbtable", "studs", (stringTable, defaultValue) -> stringTable);
             String dataBaseUser = ParsFromEV.getFromEV("dbuser", "s336768", (stringUser, defaultValue) -> stringUser);
             String dataBasePassword = ParsFromEV.getFromEV("dbpassword", "ccw507", (stringPassword, defaultValue) -> stringPassword);
-            try (Connection connectionDB = DriverManager.getConnection("jdbc:postgresql://" + dataBaseHost + '/' + dataBaseTable, dataBaseUser, dataBasePassword)) {
+            try (Connection connectionDB = DriverManager.getConnection("jdbc:postgresql://" + "localhost" + '/' + "lab", "postgres", "87740432164")) {
                     ServerApp app = new ServerApp(address, port, connectionDB, numberOfTreads);
                     app.start();
                 } catch (SQLException e) {

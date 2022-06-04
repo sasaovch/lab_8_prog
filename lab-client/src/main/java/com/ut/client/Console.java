@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import com.ut.common.commands.Command;
 import com.ut.common.commands.CommandManager;
-import com.ut.common.commands.CommandResult;
 import com.ut.common.util.BodyCommand;
 import com.ut.common.util.IOManager;
 import com.ut.common.util.Message;
@@ -33,33 +32,36 @@ public class Console {
         return isWorkState;
     }
 
-    public CommandResult readNewCommand() throws IOException {
+    public void executeScript() throws IOException {
         String line = "";
         String nameCommand;
         String[] value;
         String[] commandline;
-        line = ioManager.readLine();
-        if (endFile(line)) {
-            return new CommandResult("error", null, true, "End of file");
-        }
-        commandline = (line + " " + " ").split(" ");
-        nameCommand = commandline[0];
-        value = Arrays.copyOfRange(commandline, 1, commandline.length);
-        Command command = parsCommand(nameCommand);
-        if (Objects.nonNull(command)) {
-            BodyCommand bodyCommand = command.requestBodyCommand(value, ioManager);
-            if (Objects.nonNull(bodyCommand)) {
-                message.setCommand(nameCommand);
-                message.setBodyCommand(bodyCommand);
-                sendManager.sendMessage(message);
-                return receiveManager.receiveMessage();
+        while (isWorkState) {
+            line = ioManager.readLine();
+            if (endFile(line)) {
+                break;
             }
-            ioManager.turnOffFileMode();
-            if (!ioManager.getFileMode()) {
-                isWorkState = false;
+            commandline = (line + " " + " ").split(" ");
+            nameCommand = commandline[0];
+            value = Arrays.copyOfRange(commandline, 1, commandline.length);
+            Command command = parsCommand(nameCommand);
+            if (Objects.nonNull(command)) {
+                BodyCommand bodyCommand = command.requestBodyCommand(value, ioManager);
+                if (Objects.nonNull(bodyCommand)) {
+                    message.setCommand(nameCommand);
+                    message.setBodyCommand(bodyCommand);
+                    sendManager.sendMessage(message);
+                    ioManager.println(receiveManager.receiveMessage().getMessageResult());
+                    continue;
+                }
+                ioManager.turnOffFileMode();
+                if (!ioManager.getFileMode()) {
+                    isWorkState = false;
+                }
             }
+            ioManager.println("Incorrect command in file");
         }
-        return new CommandResult("error", null, false, "Incorrect command in file");
     }
 
     public Command parsCommand(String name) {

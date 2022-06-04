@@ -1,9 +1,7 @@
 package util;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,7 +25,7 @@ public final class FilterSpaceMarine {
             case "name" : returnlist = filterByName(listSpaceMar, typeFilter, value);
                         break;
             case "creation Time" :
-                        returnlist = filterByCreationTime(listSpaceMar, typeFilter, StringConverterRealisation.parseDate(value));
+                        returnlist = filterByCreationTime(listSpaceMar, typeFilter, ConverterToBundle.parseDateTime(value));
                         break;
             case "coordinate x" :
                         Double valueX = Double.parseDouble(value);
@@ -63,7 +61,7 @@ public final class FilterSpaceMarine {
                         returnlist = filterByLoyal(listSpaceMar, typeFilter, valueLoyal);
                         break;
             case "category" :
-                        AstartesCategory valueCategory = AstartesCategory.valueOf(value);
+                        AstartesCategory valueCategory = AstartesCategory.valueOf(value.toUpperCase());
                         returnlist = filterByCategory(listSpaceMar, typeFilter, valueCategory);
                         break;
             case "chapter" :
@@ -102,23 +100,17 @@ public final class FilterSpaceMarine {
         return listSpaceMar.stream().filter(x -> x.getName().compareTo(value) == 0).collect(Collectors.toList());
     }
 
-    public static List<SpaceMarine> filterByCreationTime(List<SpaceMarine> listSpaceMar, String typeFilter, Date date) {
+    public static List<SpaceMarine> filterByCreationTime(List<SpaceMarine> listSpaceMar, String typeFilter, LocalDateTime date) {
         if ("lower".equals(typeFilter)) {
-            return listSpaceMar.stream().filter(x -> convertToDateViaInstant(x.getCreationDateTime()).compareTo(date) < 0).collect(Collectors.toList());
+            return listSpaceMar.stream().filter(x -> x.getCreationDateTime().compareTo(date) < 0).collect(Collectors.toList());
 
         }
         if ("greater".equals(typeFilter)) {
-            return listSpaceMar.stream().filter(x -> convertToDateViaInstant(x.getCreationDateTime()).compareTo(date) > 0).collect(Collectors.toList());
+            return listSpaceMar.stream().filter(x -> x.getCreationDateTime().compareTo(date) > 0).collect(Collectors.toList());
 
         }
-        return listSpaceMar.stream().filter(x -> convertToDateViaInstant(x.getCreationDateTime()).compareTo(date) == 0).collect(Collectors.toList());
+        return listSpaceMar.stream().filter(x -> x.getCreationDateTime().compareTo(date) == 0).collect(Collectors.toList());
 
-    }
-
-    public static Date convertToDateViaInstant(LocalDateTime dateToConvert) {
-        return java.util.Date
-          .from(dateToConvert.atZone(ZoneId.systemDefault())
-          .toInstant());
     }
 
     public static List<SpaceMarine> filterByCoordinateX(List<SpaceMarine> listSpaceMar, String typeFilter, double value) {

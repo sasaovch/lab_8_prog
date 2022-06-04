@@ -22,7 +22,7 @@ public class AddIfMinCommand extends Command {
         BodyCommandWithSpMar bodyCommandWithSpMar = (BodyCommandWithSpMar) bodyCommand;
         bodyCommandWithSpMar.getSpaceMarine().setOwnerName(user.getUsername());
         switch (collectionManager.addIfMin(bodyCommandWithSpMar.getSpaceMarine())) {
-            case True : return new CommandResult("add_if_min", null, true, bodyCommandWithSpMar.getSpaceMarine().getName() + " has been added.");
+            case True : return new CommandResult("add_if_min", null, true, "SpaceMarine has been added.");
             case False :  return new CommandResult("add_if_min", null, false, "Element is bigger than minimum.");
             default :  return new CommandResult("add_if_min", null, false, "Database broke down.");
         }

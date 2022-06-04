@@ -49,18 +49,20 @@ public class LoginJPanel extends JPanel {
     private final GUIManager guiManager;
     private final ConnectionAndExecutorManager caeManager;
     private ResourceBundle resourceBundle;
+    private BasicGUIElementsFabric basicGUIElementsFabric;
 
     public LoginJPanel(GUIManager guiManager, ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
         this.guiManager = guiManager;
         this.caeManager = caeManager;
+        basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
         setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         initElement();
     }
 
     private void initElement() {
-        listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
+        listToChooseLanguage = basicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
         listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
         setSettingForLanguagesList();
         listOfLanguagesJPanel.add(listToChooseLanguage);
@@ -80,18 +82,18 @@ public class LoginJPanel extends JPanel {
         add(submitButtonJPanel);
         add(errorFieldJPanel);
 
-        loginJLabe = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Eneter your username"));
+        loginJLabe = basicGUIElementsFabric.createBasicLabel("Eneter your username");
         loginLabelJPanel.add(loginJLabe, BorderLayout.CENTER);
-        loginJTextField = BasicGUIElementsFabric.createBasicJTextField();
+        loginJTextField = basicGUIElementsFabric.createBasicJTextField();
         loginTextFieldJPanel.add(loginJTextField);
-        passwordJLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Eneter your password"));
+        passwordJLabel = basicGUIElementsFabric.createBasicLabel("Eneter your password");
         passwordLabelJPanel.add(passwordJLabel, BorderLayout.CENTER);
-        passwordJPasswordField = BasicGUIElementsFabric.createBasicJPasswordFiled();
+        passwordJPasswordField = basicGUIElementsFabric.createBasicJPasswordFiled();
         passwordTextFieldJPanel.add(passwordJPasswordField);
-        loginJButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("Log In"));
+        loginJButton = basicGUIElementsFabric.createBasicButton("Log In");
         setListenerForLoginButton();
         submitButtonJPanel.add(loginJButton);
-        signupJButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("Sign Up"));
+        signupJButton = basicGUIElementsFabric.createBasicButton("Sign Up");
         setListenerForSignUpButton();
         submitButtonJPanel.add(signupJButton);
     }
@@ -107,7 +109,7 @@ public class LoginJPanel extends JPanel {
     }
 
     private void printError(String error) {
-        errorJLabel = BasicGUIElementsFabric.createBasicLabel(error);
+        errorJLabel = basicGUIElementsFabric.createBasicLabel(error);
         errorFieldJPanel.removeAll();
         errorFieldJPanel.add(errorJLabel);
         guiManager.reloadMainScreen();
@@ -122,12 +124,13 @@ public class LoginJPanel extends JPanel {
                 try {
                     boolean answer = caeManager.login(username, password);
                     if (!answer) {
-                        printError(resourceBundle.getString("Login or password is incorrect"));
+                        printError(("Login or password is incorrect"));
                     } else {
-                        guiManager.showTablePanel(resourceBundle);
+                        // guiManager.showTablePanel(resourceBundle);
+                        guiManager.showVisualPanel(resourceBundle);
                     }
                 } catch (ConnectionLostExeption e) {
-                    printError(resourceBundle.getString("Error to connect to server"));
+                    printError(("Error to connect to server"));
                 }
             }
         });
@@ -142,12 +145,12 @@ public class LoginJPanel extends JPanel {
                 try {
                     boolean answer = caeManager.signup(username, password);
                     if (!answer) {
-                        printError(resourceBundle.getString("This username is already used"));
+                        printError(("This username is already used"));
                     } else {
                         guiManager.showTablePanel(resourceBundle);
                     }
                 } catch (ConnectionLostExeption e) {
-                    printError(resourceBundle.getString("Error to connect to server"));
+                    printError(("Error to connect to server"));
                 }
             }
         });

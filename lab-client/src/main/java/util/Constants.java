@@ -14,7 +14,7 @@ public final class Constants {
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int LABEL_WIDTH = SCREEN_WIDTH / 2;
-    public static final int LABEL_HEIGHT = SCREEN_HEIGHT / 10;
+    public static final int LABEL_HEIGHT = SCREEN_HEIGHT / 9;
     public static final int TEXTFIELD_WIDTH = SCREEN_WIDTH / 4;
     public static final int TEXTFIELD_HIGHT = SCREEN_HEIGHT / 10;
     public static final int BUTTON_WIDTH = SCREEN_WIDTH / 7;
@@ -23,7 +23,7 @@ public final class Constants {
     public static final int COMBOX_HIGHT = SCREEN_HEIGHT / 30;
     public static final int POPUP_FRAME_WIDTH = SCREEN_WIDTH / 3;
     public static final int POPUP_FRAME_HIGHT = SCREEN_HEIGHT / 3;
-    public static final int CENTER_PANEL_HEIGHT = SCREEN_HEIGHT;
+    public static final int CENTER_PANEL_HEIGHT = SCREEN_HEIGHT / 5 * 3;
     public static final int DATE_CHOOSER_HEIGHT = Constants.SCREEN_HEIGHT / 20;
     public static final int DATE_CHOOSER_WIDTH = Constants.SCREEN_WIDTH / 10;
     public static final int CALENDAR_WIDTH = Constants.SCREEN_WIDTH / 5;

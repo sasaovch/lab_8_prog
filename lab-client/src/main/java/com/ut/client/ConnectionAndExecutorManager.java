@@ -1,6 +1,5 @@
 package com.ut.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -17,7 +16,6 @@ import com.ut.common.data.SpaceMarine;
 import com.ut.common.data.User;
 import com.ut.common.util.BodyCommand;
 import com.ut.common.util.BodyCommandWithSpMar;
-import com.ut.common.util.IOManager;
 import com.ut.common.util.Message;
 
 import exeptions.ConnectionLostExeption;
@@ -25,7 +23,7 @@ import lombok.Getter;
 
 @Getter
 public final class ConnectionAndExecutorManager {
-    private static final int DEFAULT_TIME_OUT = 5000;
+    private static final int DEFAULT_TIME_OUT = 1000;
     private SendManager sendManager;
     private ReceiveManager receiveManager;
     private Message message;
@@ -115,24 +113,24 @@ public final class ConnectionAndExecutorManager {
     }
 
     public CommandResult executeCommand(String nameCommand, SpaceMarine spaceMarine, Object data)  {
-        if ("execute_script".equals(nameCommand)) {
-            File scriptFile = (File) data;
-            IOManager ioManager = new IOManager();
-            ioManager.turnOnFileMode(scriptFile.getAbsolutePath());
-            Console console = new Console(ioManager, receiveManager, sendManager, message);
-            try {
-                while (console.isWorkState()) {
-                    return console.readNewCommand();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         BodyCommandWithSpMar bodyCommand = new BodyCommandWithSpMar(data, spaceMarine);
         message.setCommand(nameCommand);
         message.setBodyCommand(bodyCommand);
         try {
             sendManager.sendMessage(message);
+            CommandResult result = receiveManager.receiveMessage();
+            if (Objects.nonNull(result)) {
+                return result;
+            }
+            return new CommandResult("error", null, false, "Connection was lost");
+        } catch (IOException e) {
+            return new CommandResult("error", null, false, "IOException");
+        }
+    }
+
+    public CommandResult executeCommand(Message sendMessage) {
+        try {
+            sendManager.sendMessage(sendMessage);
             CommandResult result = receiveManager.receiveMessage();
             if (Objects.nonNull(result)) {
                 return result;

@@ -51,7 +51,6 @@ public final class CreateSQLTable {
             Statement stat = connectionDB.createStatement();
             stat.execute(createTableQuery);
         } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

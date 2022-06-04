@@ -1,13 +1,11 @@
 package gui;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.ut.client.ConnectionAndExecutorManager;
 import com.ut.common.data.AstartesCategory;
 import com.ut.common.data.Chapter;
 import com.ut.common.data.Coordinates;
@@ -16,14 +14,12 @@ import com.ut.common.data.SpaceMarine;
 import exeptions.IllegalValueException;
 import util.ArgumentParser;
 import util.Constants;
+import util.ConstantsLanguage;
 import util.SpaceMarineValidarot;
 import util.StringConverter;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 public class AddJPanel extends JPanel {
@@ -31,9 +27,8 @@ public class AddJPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private static final int AMOUNT_OF_COLS = 3;
     private static final int AMOUNT_OF_ROWS = 12;
-    private static final int FACTOR_FOR_ROWS = 6;
+    private static final int FACTOR_FOR_ROWS = 10;
     private JPanel centralPanel = new JPanel();
-    private JButton submitButton;
 
     private ArgumentParser argumentParser = new ArgumentParser();
 
@@ -63,24 +58,24 @@ public class AddJPanel extends JPanel {
     private JLabel marinesCountReq;
     private JLabel worldReq;
 
-    private JTextField nameField = BasicGUIElementsFabric.createBasicJTextField();
-    private JTextField xField = BasicGUIElementsFabric.createBasicJTextField();
-    private JTextField yField = BasicGUIElementsFabric.createBasicJTextField();
-    private JTextField healthField = BasicGUIElementsFabric.createBasicJTextField();
-    private JTextField heartCountField = BasicGUIElementsFabric.createBasicJTextField();
-    private JTextField chapterField = BasicGUIElementsFabric.createBasicJTextField();
-    private JTextField parentLegionField = BasicGUIElementsFabric.createBasicJTextField();
-    private JTextField marinesCountField = BasicGUIElementsFabric.createBasicJTextField();
-    private JTextField worldField = BasicGUIElementsFabric.createBasicJTextField();
+    private JTextField nameField;
+    private JTextField xField;
+    private JTextField yField;
+    private JTextField healthField;
+    private JTextField heartCountField;
+    private JTextField chapterField;
+    private JTextField parentLegionField;
+    private JTextField marinesCountField;
+    private JTextField worldField;
     private JComboBox<String> loyaJComboBox;
     private JComboBox<String> categoryJComboBox;
 
     private ResourceBundle resourceBundle;
-    private ConnectionAndExecutorManager caeManager;
+    private BasicGUIElementsFabric basicGUIElementsFabric;
 
-    public AddJPanel(ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
+    public AddJPanel(ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
-        this.caeManager = caeManager;
+        basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
         setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
         initElements();
         setSettingsForElements();
@@ -89,33 +84,41 @@ public class AddJPanel extends JPanel {
 
     private void initElements() {
         centralPanel = new JPanel();
+        nameField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        xField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        yField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        healthField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        heartCountField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        chapterField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        parentLegionField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        marinesCountField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        worldField = basicGUIElementsFabric.createBasicJTextField(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
 
-        loyaJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("null"), resourceBundle.getString("true"), resourceBundle.getString("false")});
-        categoryJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("aggressor"), resourceBundle.getString("tactical"), resourceBundle.getString("inceptor"), resourceBundle.getString("helix")});
-        fieldText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Field"));
-        valueText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Value"));
-        nameText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("name"));
-        xText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("x"));
-        yText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("y"));
-        healthText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("health"));
-        heartCountText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("heartCount"));
-        loyalText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("loyal"));
-        categoryText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("category"));
-        chapterText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("chapter"));
-        parentLegionText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("parentLegion"));
-        marinesCountText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("marinesCount"));
-        worldText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("world"));
-        requirementText = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Requirement"));
-        nameReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Not empty"));
-        xReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Any double"));
-        yReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Not null"));
-        healthReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Integer, >0"));
-        heartCountReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Integer, 0<x<4"));
-        chapterReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("May be null"));
-        parentLegionReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Any string"));
-        marinesCountReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Integer, 0<x<1001"));
-        worldReq = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Not empty"));
-        submitButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("submit"));
+        loyaJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.TRUE, ConstantsLanguage.FALSE, ConstantsLanguage.FALSE});
+        categoryJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.AGGRESSOR, ConstantsLanguage.HELIX, ConstantsLanguage.TACTICAL, ConstantsLanguage.INCEPTOR});
+        fieldText = basicGUIElementsFabric.createBasicLabel("Field", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        valueText = basicGUIElementsFabric.createBasicLabel("Value", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        nameText = basicGUIElementsFabric.createBasicLabel("name", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        xText = basicGUIElementsFabric.createBasicLabel("x", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        yText = basicGUIElementsFabric.createBasicLabel("y", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        healthText = basicGUIElementsFabric.createBasicLabel("health", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        heartCountText = basicGUIElementsFabric.createBasicLabel("heartCount", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        loyalText = basicGUIElementsFabric.createBasicLabel("loyal", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        categoryText = basicGUIElementsFabric.createBasicLabel("category", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        chapterText = basicGUIElementsFabric.createBasicLabel("chapter", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        parentLegionText = basicGUIElementsFabric.createBasicLabel("parentLegion", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        marinesCountText = basicGUIElementsFabric.createBasicLabel("marinesCount", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        worldText = basicGUIElementsFabric.createBasicLabel("world", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        requirementText = basicGUIElementsFabric.createBasicLabel("Requirement", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        nameReq = basicGUIElementsFabric.createBasicLabel("Not empty", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        xReq = basicGUIElementsFabric.createBasicLabel("Any double", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        yReq = basicGUIElementsFabric.createBasicLabel("Not null", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        healthReq = basicGUIElementsFabric.createBasicLabel("Integer, >0", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        heartCountReq = basicGUIElementsFabric.createBasicLabel("Integer, 0<x<4", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        chapterReq = basicGUIElementsFabric.createBasicLabel("May be null", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        parentLegionReq = basicGUIElementsFabric.createBasicLabel("Any string", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        marinesCountReq = basicGUIElementsFabric.createBasicLabel("Integer, 0<x<1001", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        worldReq = basicGUIElementsFabric.createBasicLabel("Not empty", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
     }
 
     private void setBorders() {
@@ -161,21 +164,16 @@ public class AddJPanel extends JPanel {
         centralPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT / AMOUNT_OF_ROWS * FACTOR_FOR_ROWS));
         centralPanel.setLayout(new GridLayout(AMOUNT_OF_ROWS, AMOUNT_OF_COLS));
         setBorders();
-
-        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        submitButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-
-        setListenerForSubmitButton();
     }
 
     private StringConverter<Boolean> createStringConverterBoolean() {
         return new StringConverter<Boolean>() {
             @Override
             public Boolean convert(String argument) {
-                if (resourceBundle.getString("null").equals(argument)) {
+                if (resourceBundle.getString(ConstantsLanguage.NULL).equals(argument)) {
                     return null;
                 }
-                if (resourceBundle.getString("true").equals(argument)) {
+                if (resourceBundle.getString(ConstantsLanguage.TRUE).equals(argument)) {
                     return true;
                 }
                 return false;
@@ -219,16 +217,6 @@ public class AddJPanel extends JPanel {
 
     public SpaceMarine getSpaceMarine() {
         return parseSpacemarineFromInput();
-    }
-
-    private void setListenerForSubmitButton() {
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                    SpaceMarine spMar = parseSpacemarineFromInput();
-                    caeManager.executeCommand("add", null, spMar);
-            }
-        });
     }
 
     private void setElements() {
@@ -278,7 +266,7 @@ public class AddJPanel extends JPanel {
         healthField.setText(Integer.toString(spaceMarine.getHealth()));
         heartCountField.setText(Integer.toString(spaceMarine.getHeartCount()));
         if (spaceMarine.getLoyal() == null) {
-            loyaJComboBox.setSelectedItem(resourceBundle.getString("null"));
+            loyaJComboBox.setSelectedItem(resourceBundle.getString(ConstantsLanguage.NULL));
         } else {
             loyaJComboBox.setSelectedItem(spaceMarine.getLoyal().toString().toUpperCase());
         }

@@ -3,6 +3,7 @@ package gui;
 import javax.swing.JPanel;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -17,15 +18,18 @@ import com.ut.common.commands.CommandResult;
 import com.ut.common.data.SpaceMarine;
 
 import util.Constants;
+import util.ConstantsLanguage;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.awt.Component;
 import java.util.stream.Collectors;
 
 public class CommandModeJPanel extends JPanel {
@@ -36,7 +40,7 @@ public class CommandModeJPanel extends JPanel {
 
     private JComboBox<String> commandsJComboBox;
     private JComboBox<String> typeOfViewJComboBox;
-    private JComboBox<String> listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
+    private JComboBox<String> listToChooseLanguage;
     private JComboBox<String> loyalBoxJComboBox;
 
     private JButton userJButton;
@@ -60,39 +64,54 @@ public class CommandModeJPanel extends JPanel {
     private GUIManager guiManager;
     private ConnectionAndExecutorManager caeManager;
     private ResourceBundle resourceBundle;
+    private BasicGUIElementsFabric basicGUIElementsFabric;
 
     public CommandModeJPanel(GUIManager guiManager, ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
         this.guiManager = guiManager;
         this.caeManager = caeManager;
+        basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
         setLayout(new BorderLayout());
         initElements();
     }
 
     public void initElements() {
-        chooseCommLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Choose command"));
-        resultOfCommandWithSpMar = BasicGUIElementsFabric.createBasicLabel("");
-
-        List<String> commandsBoxList = caeManager.getCommendsForGUI().stream().map(resourceBundle::getString).collect(Collectors.toList());
+        chooseCommLabel = basicGUIElementsFabric.createBasicLabel("Choose command");
+        resultOfCommandWithSpMar = basicGUIElementsFabric.createBasicLabel("");
+        listToChooseLanguage = basicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
+        listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
+        addJPanel = new AddJPanel(resourceBundle);
+        List<String> commandsBoxList = caeManager.getCommendsForGUI().stream().collect(Collectors.toList());
         String[] commandsBoxString = new String[commandsBoxList.size()];
         int i = 0;
         for (String command : commandsBoxList) {
             commandsBoxString[i] = command;
             i++;
         }
-        commandsJComboBox = BasicGUIElementsFabric.createBasicComboBox(commandsBoxString);
-        typeOfViewJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("Command Panel"), resourceBundle.getString("Table View"), resourceBundle.getString("Visual View")});
-        loyalBoxJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("null"), resourceBundle.getString("true"), resourceBundle.getString("false")});
-        userJButton = BasicGUIElementsFabric.createBasicButton("user"/*caeManager.getUsername()*/);
-        submitJOperation = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("push"));
-
+        commandsJComboBox = basicGUIElementsFabric.createBasicComboBox(commandsBoxString);
+        typeOfViewJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.COMMAND_PANEL, ConstantsLanguage.TABLE_VIEW, ConstantsLanguage.VISUAL_VIEW});
+        loyalBoxJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.TRUE, ConstantsLanguage.FALSE, ConstantsLanguage.FALSE});
+        userJButton = new JButton();
+        userJButton.setFont(Constants.MAIN_FONT);
+        userJButton.setText((caeManager.getUsername()));
+        userJButton.setBackground(Constants.SUB_COLOR);
+        userJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        submitJOperation = basicGUIElementsFabric.createBasicButton("push");
         centerJPanel = new JPanel();
         northJPanel = new JPanel();
         resultJPanel = new JPanel();
         argumentJPanel = new JPanel();
+        argumentTextField = basicGUIElementsFabric.createBasicJTextField();
+        argumentTextField.setEditable(false);
 
-        argumentTextField = BasicGUIElementsFabric.createBasicJTextField();
+        initTextArea();
 
+        setSettings();
+        add(northJPanel, BorderLayout.NORTH);
+        add(centerJPanel, BorderLayout.CENTER);
+    }
+
+    private void initTextArea() {
         textResult = new JTextArea();
         textResult.setEditable(false);
         textResult.setLineWrap(true);
@@ -103,10 +122,6 @@ public class CommandModeJPanel extends JPanel {
         scrollText.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
         scrollText.setBorder(BorderFactory.createEmptyBorder(Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP));
         argumentJPanel.add(scrollText);
-
-        setSettings();
-        add(northJPanel, BorderLayout.NORTH);
-        add(centerJPanel, BorderLayout.CENTER);
     }
 
     private void setSettings() {
@@ -127,7 +142,7 @@ public class CommandModeJPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 resourceBundle = Constants.getBundleFromLanguageName(listToChooseLanguage.getSelectedItem().toString());
-                guiManager.showTablePanel(resourceBundle);
+                guiManager.showCommandPanel(resourceBundle);
             }
         });
     }
@@ -136,7 +151,11 @@ public class CommandModeJPanel extends JPanel {
         executeScriptFileChooser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                caeManager.executeCommand("execute_script", null, executeScriptFileChooser.getSelectedFile());
+                ExecutorScriptService executor = new ExecutorScriptService(caeManager, executeScriptFileChooser.getSelectedFile(), textResult);
+                executor.executeScript();
+                argumentJPanel.removeAll();
+                argumentJPanel.add(scrollText);
+                guiManager.reloadMainScreen();
             }
         });
     }
@@ -146,10 +165,14 @@ public class CommandModeJPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 resultJPanel.removeAll();
                 JFrame exitFrame = new JFrame();
-                JPanel panel = new JPanel();
-                JButton yesButton = new JButton(resourceBundle.getString("YES"));
-                JButton noButton = new JButton(resourceBundle.getString("NO"));
-                JLabel label = new JLabel(resourceBundle.getString("Do you want exit?"));
+                Container pane = exitFrame.getContentPane();
+                pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+                JButton yesButton = basicGUIElementsFabric.createBasicButton("YES");
+                yesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                JButton noButton = basicGUIElementsFabric.createBasicButton("NO");
+                noButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                JLabel label = basicGUIElementsFabric.createBasicLabel("Do you want exit?");
+                label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 yesButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         exitFrame.dispose();
@@ -161,10 +184,9 @@ public class CommandModeJPanel extends JPanel {
                         exitFrame.dispose();
                     }
                 });
-                panel.add(yesButton);
-                panel.add(noButton);
-                panel.add(label);
-                exitFrame.add(panel);
+                exitFrame.add(label, exitFrame.getContentPane());
+                exitFrame.add(yesButton, exitFrame.getContentPane());
+                exitFrame.add(noButton, exitFrame.getContentPane());
                 exitFrame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
                 exitFrame.setVisible(true);
             }
@@ -189,7 +211,7 @@ public class CommandModeJPanel extends JPanel {
                         } else {
                             argumentTextField.setEditable(false);
                         }
-                    argumentJPanel.add(new AddJPanel(caeManager, resourceBundle));
+                    argumentJPanel.add(addJPanel);
                 } else if (resourceBundle.getString("execute_script").equals(commandsJComboBox.getSelectedItem().toString())) {
                     argumentJPanel.add(executeScriptFileChooser);
                 } else if (resourceBundle.getString("count_by_loyal").equals(commandsJComboBox.getSelectedItem().toString())) {
@@ -229,32 +251,42 @@ public class CommandModeJPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 resultJPanel.removeAll();
                 SpaceMarine spMar = null;
+                spMar = addJPanel.getSpaceMarine();
                 String commandToExecute = findRightCommand();
-                if (resourceBundle.getString("add").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("add_if_min").equals(commandsJComboBox.getSelectedItem().toString())
-                || resourceBundle.getString("remove_greater").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_lower").equals(commandsJComboBox.getSelectedItem().toString())
-                || resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString())) {
-                    spMar = addJPanel.getSpaceMarine();
+                if (resourceBundle.getString("add").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("add_if_min").equals(commandsJComboBox.getSelectedItem().toString())|| resourceBundle.getString("remove_greater").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_lower").equals(commandsJComboBox.getSelectedItem().toString())) {
                     if (spMar == null) {
-                        printError(resourceBundle.getString("Invalid arguments"));
+                        printError(("Invalid arguments"));
                         return;
                     }
                     CommandResult result = caeManager.executeCommand(commandToExecute, spMar, null);
-                    resultOfCommandWithSpMar.setText(result.getMessageResult());
-                } else if (resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_by_id").equals(commandsJComboBox.getSelectedItem().toString())) {
+                    printMessage(result.getMessageResult());
+                } else if (resourceBundle.getString("remove_by_id").equals(commandsJComboBox.getSelectedItem().toString())) {
                     try {
                         Long id = Long.parseLong(argumentTextField.getText());
                         CommandResult result = caeManager.executeCommand(commandToExecute, spMar, id);
-                        resultOfCommandWithSpMar.setText(result.getMessageResult());
+                        printMessage(result.getMessageResult());
                     } catch (NumberFormatException exception) {
-                        printError(resourceBundle.getString("Invalid value for id"));
+                        printError(("Invalid value for id"));
+                    }
+                } else if (resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString())) {
+                    try {
+                        Long id = Long.parseLong(argumentTextField.getText());
+                        if (spMar == null) {
+                            printError(("Invalid arguments"));
+                            return;
+                        }
+                        CommandResult result = caeManager.executeCommand(commandToExecute, spMar, id);
+                        printMessage(result.getMessageResult());
+                    } catch (NumberFormatException exception) {
+                        printError("Invalid value for id");
                     }
                 } else if (resourceBundle.getString("count_by_loyal").equals(commandsJComboBox.getSelectedItem().toString())) {
-                    Boolean loyalPars;
+                    Boolean loyalPars = null;
                     String loyal = loyalBoxJComboBox.getSelectedItem().toString();
-                    if (resourceBundle.getString("null").equals(loyal)) {
-                        loyalPars = null;
-                    } else {
-                        loyalPars = Boolean.parseBoolean(loyal);
+                    if (resourceBundle.getString(ConstantsLanguage.TRUE).equals(loyal)) {
+                        loyalPars = true;
+                    } else if (resourceBundle.getString(ConstantsLanguage.FALSE).equals(loyal)) {
+                        loyalPars = false;
                     }
                     showResultOfExecuteCommand(caeManager.executeCommand("count_by_loyal", null, loyalPars));
                 } else {
@@ -266,6 +298,12 @@ public class CommandModeJPanel extends JPanel {
     }
 
     private void printError(String message) {
+        resultOfCommandWithSpMar.setText(resourceBundle.getString(message));
+        resultJPanel.add(resultOfCommandWithSpMar);
+        guiManager.reloadMainScreen();
+    }
+
+    private void printMessage(String message) {
         resultOfCommandWithSpMar.setText(message);
         resultJPanel.add(resultOfCommandWithSpMar);
         guiManager.reloadMainScreen();

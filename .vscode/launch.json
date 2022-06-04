@@ -16,7 +16,7 @@
             "name": "Launch Server",
             "request": "launch",
             "mainClass": "com.ut.server.serverWork.Server",
-            "projectName": "lab-server"
+            "projectName": "lab-server",
         },
         {
             "type": "java",
@@ -42,7 +42,7 @@
     "compounds": [
         {
             "name": "Compound",
-            "configurations": ["Launch MainJFrame", "Launch Server"]
+            "configurations": ["Launch MainJFrame", "Launch Server", "Launch MainJFrame"]
         }
     ]
 }

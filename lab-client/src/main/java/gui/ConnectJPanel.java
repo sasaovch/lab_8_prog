@@ -31,7 +31,7 @@ public class ConnectJPanel extends JPanel {
     private final JPanel errorFieldJPanel = new JPanel();
 
     private final int numberOfPanels = 7;
-    private final int panelWidth = Constants.SCREEN_WIDTH;
+    private final int panelWidth = Constants.SCREEN_WIDTH / 2;
     private final int panelHeight = Constants.SCREEN_HEIGHT / numberOfPanels;
 
     private JComboBox<String> listToChooseLanguage;
@@ -45,18 +45,20 @@ public class ConnectJPanel extends JPanel {
     private final GUIManager guiManager;
     private final ConnectionAndExecutorManager caeManager;
     private ResourceBundle resourceBundle;
+    private BasicGUIElementsFabric basicGUIElementsFabric;
 
     public ConnectJPanel(GUIManager guiManager, ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
         this.guiManager = guiManager;
         this.caeManager = caeManager;
-        setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.SCREEN_HEIGHT));
+        basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
+        setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.SCREEN_HEIGHT / 2));
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         initElement();
     }
 
     private void initElement() {
-        listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
+        listToChooseLanguage = basicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
         listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
         setSettingForLanguagesList();
         listOfLanguagesJPanel.add(listToChooseLanguage);
@@ -77,19 +79,18 @@ public class ConnectJPanel extends JPanel {
         add(submitButtonJPanel);
         add(errorFieldJPanel);
 
-        addressJLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Eneter host address"));
+        addressJLabel = basicGUIElementsFabric.createBasicLabel("Eneter host address");
         addressLabelJPanel.add(addressJLabel, BorderLayout.CENTER);
 
-        addressJTextField = BasicGUIElementsFabric.createBasicJTextField();
+        addressJTextField = basicGUIElementsFabric.createBasicJTextField();
         addressTextFieldJPanel.add(addressJTextField, BorderLayout.CENTER);
 
-        portLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Eneter host port"));
+        portLabel = basicGUIElementsFabric.createBasicLabel("Eneter host port");
         portLabelJPanel.add(portLabel, BorderLayout.CENTER);
-
-        portJTextField = BasicGUIElementsFabric.createBasicJTextField();
+    
+        portJTextField = basicGUIElementsFabric.createBasicJTextField();
         portTextFielJdPanel.add(portJTextField, BorderLayout.CENTER);
-
-        submitJButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("connect"));
+        submitJButton = basicGUIElementsFabric.createBasicButton("connect");
         submitJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH * 2, Constants.BUTTON_HEIGHT));
         setConnectionListenerForFirstSubmitButton();
         submitButtonJPanel.add(submitJButton, BorderLayout.CENTER);
@@ -107,7 +108,7 @@ public class ConnectJPanel extends JPanel {
     }
 
     private void printError(String error) {
-        errorJLabel = BasicGUIElementsFabric.createBasicLabel(error);
+        errorJLabel = basicGUIElementsFabric.createBasicLabel(error);
         errorFieldJPanel.removeAll();
         errorFieldJPanel.add(errorJLabel);
         guiManager.reloadMainScreen();
@@ -123,7 +124,7 @@ public class ConnectJPanel extends JPanel {
                 String port = portJTextField.getText();
                 boolean answer = caeManager.connectToServer(address, port);
                 if (!answer) {
-                    printError(resourceBundle.getString("Error to connect to server"));
+                    printError("Error to connect to server");
                 } else {
                     guiManager.showLoginPanel(resourceBundle);
                 }

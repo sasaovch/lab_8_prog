@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import com.toedter.calendar.JDateChooser;
 import com.ut.client.ConnectionAndExecutorManager;
@@ -18,15 +19,21 @@ import com.ut.common.data.SpaceMarine;
 
 import exeptions.ConnectionLostExeption;
 import util.Constants;
+import util.ConstantsLanguage;
 import util.FilterSpaceMarine;
 import util.ParsList;
+import java.awt.Component;
 import util.SortSpaceMarine;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,16 +76,19 @@ public class TableViewJPanel extends JPanel {
     private JLabel resultOfOperationJLabel;
 
     private String[] tableHeader;
+    private String[][] tableRows;
     private List<SpaceMarine> listForTable;
 
     private GUIManager guiManager;
     private ResourceBundle resourceBundle;
     private ConnectionAndExecutorManager caeManager;
+    private BasicGUIElementsFabric basicGUIElementsFabric;
 
     public TableViewJPanel(GUIManager guiManager, ResourceBundle resourceBundle, ConnectionAndExecutorManager caeManager) {
         this.guiManager = guiManager;
         this.caeManager = caeManager;
         this.resourceBundle = resourceBundle;
+        basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
         setLayout(new BorderLayout());
         initElements();
     }
@@ -86,42 +96,42 @@ public class TableViewJPanel extends JPanel {
     public void initElements() {
         centerJPanel = new JPanel();
         northJPanel = new JPanel();
+        resultOfOperationJLabel = new JLabel();
+        resultOfOperationJLabel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
+        resultOfOperationJLabel.setFont(Constants.SUB_FONT);
 
-        tableHeader = new String[]{resourceBundle.getString("id"), resourceBundle.getString("name"), resourceBundle.getString("creation Time"), resourceBundle.getString("health"), resourceBundle.getString("heartCount"), resourceBundle.getString("loyal"), resourceBundle.getString("category"), resourceBundle.getString("chapter"), resourceBundle.getString("parentLegion"), resourceBundle.getString("marinesCount"), resourceBundle.getString("world")};
-        sortOrfilterJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("Sort"), resourceBundle.getString("Filter")});
-        fieldForSOFJComboBox = BasicGUIElementsFabric.createBasicComboBox(tableHeader);
-        typeOfSortJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("increase"), resourceBundle.getString("decrease")});
-        typeOfFilterJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("equals"), resourceBundle.getString("greater"), resourceBundle.getString("lower")});
-        typeOfViewJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("Table View"), resourceBundle.getString("Visual View"), resourceBundle.getString("Command Panel")});
+        tableHeader = new String[]{("id"), ("name"), ("creation Time"), ("x"), ("y"), ("health"), ("heartCount"), ("loyal"), ("category"), ("chapter"), ("parentLegion"), ("marinesCount"), ("world"), ("ownername")};
+        sortOrfilterJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{("Sort"), ("Filter")});
+        fieldForSOFJComboBox = basicGUIElementsFabric.createBasicComboBox(tableHeader);
+        typeOfSortJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{("increase"), ("decrease")});
+        typeOfFilterJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{("equals"), ("greater"), ("lower")});
+        typeOfViewJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.TABLE_VIEW, ConstantsLanguage.VISUAL_VIEW, ConstantsLanguage.COMMAND_PANEL});
 
-        listToChooseLanguage = BasicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
+        listToChooseLanguage = basicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
         listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
         setSettingForLanguagesList();
 
-        userJButton = BasicGUIElementsFabric.createBasicButton(caeManager.getUsername());
-        submitArgumentJButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("filter"));
-
-        submitArgumentJButtonOperationJButon = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("sort"));
-        loyaJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("null"), resourceBundle.getString("true"), resourceBundle.getString("false")});
-        categoryJComboBox = BasicGUIElementsFabric.createBasicComboBox(new String[]{resourceBundle.getString("aggressor"), resourceBundle.getString("tactical"), resourceBundle.getString("inceptor"), resourceBundle.getString("helix")});
-
+        userJButton = new JButton();
+        userJButton.setFont(Constants.MAIN_FONT);
+        userJButton.setText((caeManager.getUsername()));
+        userJButton.setBackground(Constants.SUB_COLOR);
+        userJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        submitArgumentJButton = basicGUIElementsFabric.createBasicButton(("filter"));
+        submitArgumentJButtonOperationJButon = basicGUIElementsFabric.createBasicButton(("sort"));
+        loyaJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.TRUE, ConstantsLanguage.FALSE, ConstantsLanguage.FALSE});
+        categoryJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.AGGRESSOR, ConstantsLanguage.HELIX, ConstantsLanguage.TACTICAL, ConstantsLanguage.INCEPTOR});
         jDateChooser = new JDateChooser();
         jDateChooser.setPreferredSize(new Dimension(Constants.DATE_CHOOSER_WIDTH, Constants.DATE_CHOOSER_HEIGHT));
         jDateChooser.getJCalendar().setPreferredSize(new Dimension(Constants.CALENDAR_WIDTH, Constants.CALENDAR_HEIGHT));
-        fieldForHours = BasicGUIElementsFabric.createBasicJTextField();
-        fieldForMinutes = BasicGUIElementsFabric.createBasicJTextField();
-        fieldForSeconds = BasicGUIElementsFabric.createBasicJTextField();
-
+        fieldForHours = basicGUIElementsFabric.createBasicJTextField();
+        fieldForMinutes = basicGUIElementsFabric.createBasicJTextField();
+        fieldForSeconds = basicGUIElementsFabric.createBasicJTextField();
         setSettings();
         addElementsToNorthPanel(typeOfSortJComboBox);
         add(northJPanel, BorderLayout.NORTH);
         add(centerJPanel, BorderLayout.CENTER);
-
         getListOFSpaceMarine();
         setSettingsForTable();
-        resultOfOperationJLabel = new JLabel();
-        resultOfOperationJLabel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
-        resultOfOperationJLabel.setFont(Constants.SUB_FONT);
     }
 
     private void setSettings() {
@@ -137,7 +147,7 @@ public class TableViewJPanel extends JPanel {
         try {
             listForTable = caeManager.getListFromServer();
         } catch (ConnectionLostExeption e) {
-            printerror(resourceBundle.getString("Error to connect to server"));
+            printerror(("Error to connect to server"));
             listForTable = new ArrayList<>();
         }
     }
@@ -146,10 +156,14 @@ public class TableViewJPanel extends JPanel {
         userJButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFrame exitFrame = new JFrame();
-                JPanel panel = new JPanel();
-                JButton yesButton = new JButton(resourceBundle.getString("YES"));
-                JButton noButton = new JButton(resourceBundle.getString("NO"));
-                JLabel label = new JLabel(resourceBundle.getString("Do you want exit?"));
+                Container pane = exitFrame.getContentPane();
+                pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+                JButton yesButton = basicGUIElementsFabric.createBasicButton("YES");
+                yesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                JButton noButton = basicGUIElementsFabric.createBasicButton("NO");
+                noButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                JLabel label = basicGUIElementsFabric.createBasicLabel("Do you want exit?");
+                label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 yesButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         exitFrame.dispose();
@@ -161,10 +175,9 @@ public class TableViewJPanel extends JPanel {
                         exitFrame.dispose();
                     }
                 });
-                panel.add(yesButton);
-                panel.add(noButton);
-                panel.add(label);
-                exitFrame.add(panel);
+                exitFrame.add(label, exitFrame.getContentPane());
+                exitFrame.add(yesButton, exitFrame.getContentPane());
+                exitFrame.add(noButton, exitFrame.getContentPane());
                 exitFrame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
                 exitFrame.setVisible(true);
             }
@@ -195,8 +208,18 @@ public class TableViewJPanel extends JPanel {
 
     private void setSettingsForTable() {
         centerJPanel.removeAll();
-        jTable = new JTable(ParsList.parseList(listForTable, resourceBundle), tableHeader);
-        jTable.setEnabled(false);
+        tableRows = ParsList.parseList(listForTable, resourceBundle);
+        jTable = new JTable(tableRows, tableHeader){
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
+                updateRow(rowIndex);
+            }
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }
+        };
         jTable.setVisible(true);
         jTable.setPreferredScrollableViewportSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE, Constants.SCREEN_HEIGHT));
         jTable.setPreferredSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE, Constants.SCREEN_HEIGHT));
@@ -205,6 +228,39 @@ public class TableViewJPanel extends JPanel {
         jTable.getTableHeader().setFont(Constants.SUB_FONT);
         jTable.setFillsViewportHeight(true);
         centerJPanel.add(new JScrollPane(jTable));
+    }
+
+    private void updateRow(int rowIndex) {
+        Long id = Long.parseLong(tableRows[rowIndex][0]);
+        SpaceMarine editSpaMar = null;
+        for (SpaceMarine spMar : listForTable) {
+            if (id.equals(spMar.getID())) {
+                editSpaMar = spMar;
+            }
+        }
+        if (caeManager.getUsername().equals(editSpaMar.getOwnerName())) {
+            ChangeFieldsSpaceMarine changeFieldsSpaceMarine = new ChangeFieldsSpaceMarine(caeManager, resourceBundle, editSpaMar);
+            changeFieldsSpaceMarine.showJFrame();
+        } else {
+            JFrame subFrame = new JFrame();
+            JPanel mainPanel = new JPanel();
+            JLabel jLabel = basicGUIElementsFabric.createBasicLabel(("It is not your spaceMarine"));
+            subFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+            mainPanel.add(jLabel);
+            JButton exitButton = basicGUIElementsFabric.createBasicButton(("OK"));
+            exitButton.setAlignmentX(CENTER_ALIGNMENT);
+            JPanel subPanel = new JPanel();
+            subPanel.setLayout(new GridBagLayout());
+            subPanel.add(exitButton);
+            mainPanel.add(subPanel);
+            exitButton.addActionListener(e1 -> subFrame.dispose());
+            subFrame.setContentPane(mainPanel);
+            subFrame.revalidate();
+            subFrame.pack();
+            subFrame.setLocationRelativeTo(null);
+            subFrame.setVisible(true);
+        }
     }
 
     private void setSettingsForElements() {
@@ -254,7 +310,6 @@ public class TableViewJPanel extends JPanel {
                 } else {
                     try {
                         listForTable = SortSpaceMarine.sortSpaceMarines(findRightName(fieldForSOFJComboBox.getSelectedItem().toString()), findRightName(typeOfSortJComboBox.getSelectedItem().toString()), caeManager.getListFromServer());
-                        listForTable.stream().forEach(System.out::println);
                         setSettingsForTable();
                         guiManager.reloadMainScreen();
                     } catch (ConnectionLostExeption e2) {
@@ -270,7 +325,7 @@ public class TableViewJPanel extends JPanel {
 
     private JFrame createJFrameForFilterInput() {
         JPanel panel = new JPanel();
-        argumentJLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Enter value of field: ") + fieldForSOFJComboBox.getSelectedItem().toString());
+        argumentJLabel = basicGUIElementsFabric.createBasicLabel(resourceBundle.getString("Enter value of field: ") + fieldForSOFJComboBox.getSelectedItem().toString());
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(argumentJLabel);
         if (resourceBundle.getString("loyal").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
@@ -286,7 +341,7 @@ public class TableViewJPanel extends JPanel {
             panel.add(fieldForMinutes);
             panel.add(fieldForSeconds);
         } else {
-            argumentJTextField = BasicGUIElementsFabric.createBasicJTextField();
+            argumentJTextField = basicGUIElementsFabric.createBasicJTextField();
             panel.add(argumentJTextField);
         }
         JFrame frame = new JFrame();
@@ -312,9 +367,9 @@ public class TableViewJPanel extends JPanel {
             public void actionPerformed(ActionEvent event) {
                 String value;
                 if (resourceBundle.getString("loyal").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
-                    value = loyaJComboBox.getSelectedItem().toString();
+                    value = findRightName(loyaJComboBox.getSelectedItem().toString());
                 } else if (resourceBundle.getString("category").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
-                    value = categoryJComboBox.getSelectedItem().toString();
+                    value = findRightName(categoryJComboBox.getSelectedItem().toString());
                 } else if (resourceBundle.getString("creation Time").equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
                     Calendar calendar = jDateChooser.getCalendar();
                     try {
@@ -324,7 +379,8 @@ public class TableViewJPanel extends JPanel {
                         Calendar calendarResult = new GregorianCalendar();
                         calendarResult.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendarResult.get(Calendar.DAY_OF_MONTH), hours, minutes, seconds);
                         Date result = calendarResult.getTime();
-                        value = result.toString();
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                        value = dateFormat.format(result);
                     } catch (NumberFormatException ee) {
                         printerror(resourceBundle.getString("NumberFormatException"));
                         return;
@@ -343,14 +399,20 @@ public class TableViewJPanel extends JPanel {
                     setSettingsForTable();
                     frame.dispose();
                     guiManager.reloadMainScreen();
+                } catch (NumberFormatException e2) {
+                    printerror(resourceBundle.getString("Number format is wrong"));
+                    listForTable = new ArrayList<>();
+                    setSettingsForTable();
+                    frame.dispose();
+                    guiManager.reloadMainScreen();
                 }
             }
         });
     }
 
     private void printerror(String error) {
-        JLabel errorJLabel = BasicGUIElementsFabric.createBasicLabel(error);
-        errorJLabel = BasicGUIElementsFabric.createBasicLabel(error);
+        JLabel errorJLabel = basicGUIElementsFabric.createBasicLabel(error);
+        errorJLabel = basicGUIElementsFabric.createBasicLabel(error);
         resultOfOperationJLabel.removeAll();
         resultOfOperationJLabel.add(errorJLabel);
         guiManager.reloadMainScreen();

@@ -35,6 +35,7 @@ public class Resource_cat_CAT extends ListResourceBundle {
         {"parentLegion", "legió mare"},
         {"marinesCount", "comptador marines"},
         {"world", "món"},
+        {"ownername", "nom del propietari"},
         {"increase", "augmenta"},
         {"decrease", "disminueix"},
         {"equals", "iguals"},
@@ -88,10 +89,22 @@ public class Resource_cat_CAT extends ListResourceBundle {
         {"NumberFormatException", "Excepció Del Format Del Número"},
         {"It is not your spaceMarine", "No és la teva nau espacial"},
         {"OK", "BÉ"},
-        {"Russian", " Rus"},
-        {"Portuguese", "Português"},
-        {"Spanish", "Español"},
-        {"Catalan", "Català"}
+        {"Русский", "Русский"},
+        {"Português", "Português"},
+        {"Español", "Español"},
+        {"Català", "Català"},
+        {"", ""},
+        {"SpaceMarine has been added.", "Воин добалвен"},
+        {"SpaceMarine already exists.", "Воин уже существует"},
+        {"Element is bigger than minimum.", "Элемент больше чем минимальный"},
+        {"Database broke down.", "База данных сломалась"},
+        {"SpaceMarine has been removed.", "Воин списан со счетов"},
+        {"Uknown Id or insufficient access rights.", "Неизвестный Id или это не ваш воин"},
+        {"All items have been successfully deleted.", "Все элементы удалены"},
+        {"No element has been deleted.", "Никто не удален"},
+        {"Marine has been successfully updated.", "Воин изменен"},
+        {"Id is not correct or insufficient access rights.", "Неверный Id или это не ваш воин"},
+        {"Connection lost", "Connexió perduda"}
     };
 
 

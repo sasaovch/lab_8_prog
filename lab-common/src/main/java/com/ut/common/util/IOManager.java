@@ -7,13 +7,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.PrintStream;
 import java.util.Stack;
 
 public class IOManager {
     private BufferedReader reader;
-    private PrintWriter writer;
+    private PrintStream writer;
     private String prompter;
     private boolean fileMode = false;
     private final Stack<BufferedReader> previosReaders = new Stack<>();
@@ -23,9 +22,9 @@ public class IOManager {
         this(System.in, System.out, "$");
     }
 
-    public IOManager(InputStream input, OutputStream output, String promter) {
+    public IOManager(InputStream input, PrintStream output, String promter) {
         this.reader = new BufferedReader(new InputStreamReader(input));
-        this.writer = new PrintWriter(output, true);
+        this.writer = output;
         this.prompter = promter;
     }
 
@@ -33,7 +32,7 @@ public class IOManager {
         reader = buf;
     }
 
-    public  void setPrintWriter(PrintWriter wr) {
+    public  void setPrintWriter(PrintStream wr) {
         writer = wr;
     }
 
@@ -41,7 +40,7 @@ public class IOManager {
         return reader;
     }
 
-    public  PrintWriter getPrintWriter() {
+    public  PrintStream getPrintWriter() {
         return writer;
     }
 
@@ -110,18 +109,23 @@ public class IOManager {
     }
 
     public void prompt() {
-        writer.printf("%s", prompter);
+            writer.print(prompter);
+            writer.flush();
     }
 
     public  void print(Object o) {
-        writer.printf("%s", o);
+            writer.print(o.toString());
+            writer.flush();
     }
 
     public  void println(Object o) {
-        writer.println(o);
+            writer.println(o.toString());
+            writer.flush();
     }
 
     public  void printerr(Object o) {
-        writer.println("Error! " + o);
+            writer.print("Error: ");
+            writer.println(o.toString());
+            writer.flush();
     }
 }

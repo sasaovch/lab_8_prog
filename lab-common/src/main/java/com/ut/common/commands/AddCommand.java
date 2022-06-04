@@ -24,9 +24,9 @@ public class AddCommand extends Command {
         bodyCommandWithSpMar.getSpaceMarine().setOwnerName(user.getUsername());
         switch (collectionManager.addElement(bodyCommandWithSpMar.getSpaceMarine())) {
             case True : return new CommandResult("add", null, true,
-                                                    bodyCommandWithSpMar.getSpaceMarine().getName() + " has been added.");
+                                                    "SpaceMarine has been added.");
             case False :  return new CommandResult("add", null, false,
-                                                    bodyCommandWithSpMar.getSpaceMarine().getName() + " already exists.");
+                                                    "SpaceMarine already exists.");
             default :  return new CommandResult("add", null, false, "Database broke down.");
         }
     }

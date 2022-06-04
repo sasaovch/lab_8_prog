@@ -17,6 +17,7 @@ import gui.BasicGUIElementsFabric;
 import gui.ChangeFieldsSpaceMarine;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -37,7 +38,7 @@ import java.util.Set;
 public class CoordinatesGraphics extends JComponent implements MouseListener, ActionListener {
     private static final long serialVersionUID = 1L;
     private static final int MAX_ALPHA = 255;
-    private static final int COUNTER_MAX = 30;
+    private static final int COUNTER_MAX = 100;
     private static final int AMOUNT_OF_PARTS = 10;
     private static final int MAX_COLOR_VALUE = 0xFFFFFF;
     private static final int BASIC_STROKE = 4;
@@ -45,8 +46,8 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
     private static final int Y_FIRST_POINT_NUMERATOR = 3;
     private static final double HITBOX_LOW_POINT = 6 / 5.0;
     private static final int LINE_HIGHT = Constants.SCREEN_HEIGHT / 3;
+    private static final int LINE_WiDHT = Constants.SCREEN_WIDTH / 7 * 3;
     private static final int TIME_DELAY = 15;
-    private static final int MIN_SIZE = 10;
 
     private HashMap<String, Color> usersAndColors = new HashMap<>();
     private Set<Color> colors = new HashSet<>();
@@ -65,106 +66,72 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
 
     private ResourceBundle resourceBundle;
     private ConnectionAndExecutorManager caeManager;
-
-    private int maxHealth = 0;
-    private double maxX = 0;
-    private long maxY = 0;
-    private int minHealth = 0;
-    private double minX = 0;
-    private long minY = 0;
-    private double factor = 0;
-    private final int differenceSize = 200;
+    private BasicGUIElementsFabric basicGUIElementsFabric;
 
     public CoordinatesGraphics(ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
         this.caeManager = caeManager;
         this.resourceBundle = resourceBundle;
+        basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
+        currentList = new ArrayList<>();
         setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
         addMouseListener(this);
         startTimer();
-        updateList();
-        currentList = new ArrayList<>();
-        for (SpaceMarine spaceMarine : newList) {
-            compareMaxVariables(spaceMarine.getHealth(), spaceMarine.getCoordinates().getX(), spaceMarine.getCoordinates().getY());
-            factor = differenceSize / (maxHealth - minHealth);
-        }
+        checkUpdates();
     }
+
     public void printerror(String error) {
         JFrame frame = new JFrame();
-        JButton okButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("OK"));
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
+        JButton okButton = basicGUIElementsFabric.createBasicButton(("OK"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 frame.dispose();
             }
         });
-        JLabel errorLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString(error));
-        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
-        frame.add(errorLabel);
-        frame.add(okButton);
-        frame.setPreferredSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
+        JLabel errorLabel = basicGUIElementsFabric.createBasicLabel((error));
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
+        frame.add(errorLabel, BorderLayout.CENTER);
+        frame.add(okButton, BorderLayout.CENTER);
         frame.setVisible(true);
     }
 
-    public void compareMaxVariables(int health, double x, long y) {
-        if (maxHealth < health) {
-            maxHealth = health;
-        }
-        if (minHealth > health) {
-            minHealth = health;
-        }
-        if (maxX < x) {
-            maxX = x;
-        }
-        if (minX > x) {
-            minX = x;
-        }
-        if (maxY < y) {
-            maxY = y;
-        }
-        if (minY > y) {
-            minY = y;
-        }
-    }
-
-    public void updateList() {
+    public void checkUpdates() {
         try {
             newList = caeManager.getListFromServer();
         } catch (ConnectionLostExeption e) {
             printerror("Connection lost");
-            newList = new ArrayList<>();
+            return;
         }
-    }
-
-    public void checkUpdates() {
-        updateList();
         for (SpaceMarine oldSpaceMarine : currentList) {
             boolean needsToRemove = true;
             for (SpaceMarine spaceMarine : newList) {
-                compareMaxVariables(spaceMarine.getHealth(), spaceMarine.getCoordinates().getX(), spaceMarine.getCoordinates().getY());
-                factor = differenceSize / (maxHealth - minHealth);
                 if (oldSpaceMarine.getID().equals(spaceMarine.getID())) {
                     needsToRemove = false;
                     if (oldSpaceMarine.getCoordinates().equals(spaceMarine.getCoordinates())
-                            && oldSpaceMarine.getCoordinates().getX() == spaceMarine.getCoordinates().getX()
-                            && oldSpaceMarine.getCoordinates().getY().equals(spaceMarine.getCoordinates().getY())) {
+                    && oldSpaceMarine.getCoordinates().getX() == spaceMarine.getCoordinates().getX()
+                    && oldSpaceMarine.getCoordinates().getY().equals(spaceMarine.getCoordinates().getY())
+                    && oldSpaceMarine.getHealth().equals(spaceMarine.getHealth())) {
                         oldSpaceMarine = spaceMarine;
                     } else {
-                        moveSpaceMarineList.add(new MovingSpaceMarine((int) oldSpaceMarine.getCoordinates().getX(), oldSpaceMarine.getCoordinates().getY(), (int) oldSpaceMarine.getHealth(), spaceMarine));
+                        showedList.remove(oldSpaceMarine);
+                        moveSpaceMarineList.add(new MovingSpaceMarine(oldSpaceMarine.getCoordinates().getX(), oldSpaceMarine.getCoordinates().getY(), oldSpaceMarine.getHealth(), spaceMarine));
                     }
                 }
             }
             if (needsToRemove) {
-                removeSpaceMarinesLIst.add(new RemovingSpaceMarine(oldSpaceMarine));
+                    showedList.remove(oldSpaceMarine);
+                    removeSpaceMarinesLIst.add(new RemovingSpaceMarine(oldSpaceMarine.getCoordinates().getX(), oldSpaceMarine.getCoordinates().getY(), oldSpaceMarine));
+                }
             }
-        }
-        for (SpaceMarine newSpaceMarine : newList) {
-            if (!idSet.contains(newSpaceMarine.getID())) {
-                idSet.add(newSpaceMarine.getID());
-                showSpaceMarineList.add(new ShowSpaceMarine(newSpaceMarine));
+            for (SpaceMarine newSpaceMarine : newList) {
+                if (!idSet.contains(newSpaceMarine.getID())) {
+                    idSet.add(newSpaceMarine.getID());
+                    showSpaceMarineList.add(new ShowSpaceMarine(newSpaceMarine.getCoordinates().getX(), newSpaceMarine.getCoordinates().getY(), newSpaceMarine.getHealth(), newSpaceMarine));
             }
         }
         currentList = new ArrayList<>(newList);
     }
-
 
     public void startTimer() {
         timer.start();
@@ -173,26 +140,25 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        g2.translate(Constants.SCREEN_WIDTH / 2, Constants.CENTER_PANEL_HEIGHT / 2);
+        g2.translate(Constants.SCREEN_WIDTH / 2, Constants.CENTER_PANEL_HEIGHT / 3 * 2);
         g2.setStroke(new BasicStroke(BASIC_STROKE));
-        g2.drawLine(-Constants.SCREEN_WIDTH, 0, Constants.SCREEN_WIDTH, 0);
+        g2.drawLine(-LINE_WiDHT, 0, LINE_WiDHT, 0);
         g2.drawLine(0, -LINE_HIGHT, 0, LINE_HIGHT);
         updateDelay--;
         if (updateDelay == 0) {
             checkUpdates();
             updateDelay = updateDelayConst;
         }
-        moveSpaceMarine(g2);
         removeSpaceMarines(g2);
+        moveSpaceMarine(g2);
         showSpaceMarines(g2);
         showShowed(g2);
-
     }
 
 
     private synchronized void showShowed(Graphics2D g2) {
         for (SpaceMarine showedSpaceMarine : showedList) {
-            drawSpaceMarine(g2, (int) showedSpaceMarine.getCoordinates().getX(), showedSpaceMarine.getCoordinates().getY(), (int) showedSpaceMarine.getHealth(), usersAndColors.get(showedSpaceMarine.getOwnerName()), MAX_ALPHA);
+            drawSpaceMarine(g2, showedSpaceMarine.getCoordinates().getX(), showedSpaceMarine.getCoordinates().getY(), showedSpaceMarine.getHealth(), usersAndColors.get(showedSpaceMarine.getOwnerName()), MAX_ALPHA);
         }
     }
 
@@ -211,68 +177,58 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
                     }
                 }
             }
-            showingSpaceMarine.tic--;
-            if (showingSpaceMarine.tic == 0) {
+            showingSpaceMarine.tic++;
+            if (showingSpaceMarine.tic == COUNTER_MAX) {
                 showSpaceMarineList.remove(showingSpaceMarine);
+                showedList.add(showingSpaceMarine.spaceMarine);
                 return;
             }
             color = usersAndColors.get(showingSpaceMarine.spaceMarine.getOwnerName());
-            int gap = (int) (showingSpaceMarine.y - showingSpaceMarine.y * (COUNTER_MAX - showingSpaceMarine.tic) / COUNTER_MAX);
-            drawSpaceMarine(g2, (int) showingSpaceMarine.x, gap, (int) showingSpaceMarine.health, color, MAX_ALPHA);
+            double gap = ((LINE_WiDHT + showingSpaceMarine.x) / COUNTER_MAX * showingSpaceMarine.tic) - LINE_WiDHT;
+            drawSpaceMarine(g2, gap, showingSpaceMarine.y, showingSpaceMarine.health, color, MAX_ALPHA);
         }
     }
 
     private void removeSpaceMarines(Graphics2D g2) {
         for (RemovingSpaceMarine removingSpaceMarine : removeSpaceMarinesLIst) {
             Color color;
-            removingSpaceMarine.tic--;
-            if (removingSpaceMarine.tic == 0) {
+            removingSpaceMarine.tic++;
+            if (removingSpaceMarine.tic == COUNTER_MAX) {
                 removeSpaceMarinesLIst.remove(removingSpaceMarine);
+                showedList.remove(removingSpaceMarine.spaceMarine);
                 return;
             }
             color = usersAndColors.get(removingSpaceMarine.spaceMarine.getOwnerName());
-            int teta = MAX_ALPHA - MAX_ALPHA * (COUNTER_MAX - removingSpaceMarine.tic) / COUNTER_MAX;
-            drawSpaceMarine(g2, (int) removingSpaceMarine.spaceMarine.getCoordinates().getX(), removingSpaceMarine.spaceMarine.getCoordinates().getY(), (int) removingSpaceMarine.spaceMarine.getHealth(), color, teta);
+            double gap = (-(LINE_WiDHT + removingSpaceMarine.x) / COUNTER_MAX * removingSpaceMarine.tic) + removingSpaceMarine.x;
+            drawSpaceMarine(g2, gap, removingSpaceMarine.y, (int) removingSpaceMarine.spaceMarine.getHealth(), color, MAX_ALPHA);
         }
     }
 
     private void moveSpaceMarine(Graphics2D g2) {
         for (MovingSpaceMarine movingSpaceMarine : moveSpaceMarineList) {
-            if (movingSpaceMarine.tic < 0) {
+            movingSpaceMarine.tic++;
+            if (movingSpaceMarine.tic == COUNTER_MAX) {
                 moveSpaceMarineList.remove(movingSpaceMarine);
                 showedList.add(movingSpaceMarine.spaceMarine);
                 return;
             }
-            movingSpaceMarine.tic--;
             movingSpaceMarine.x += movingSpaceMarine.deltaX;
             movingSpaceMarine.y += movingSpaceMarine.deltaY;
             movingSpaceMarine.health += movingSpaceMarine.deltaHealth;
-            drawSpaceMarine(g2, (int) movingSpaceMarine.x, (long) movingSpaceMarine.y, (int) movingSpaceMarine.health, usersAndColors.get(movingSpaceMarine.spaceMarine.getOwnerName()), MAX_ALPHA);
+            drawSpaceMarine(g2, movingSpaceMarine.x, (long) movingSpaceMarine.y, movingSpaceMarine.health, usersAndColors.get(movingSpaceMarine.spaceMarine.getOwnerName()), MAX_ALPHA);
         }
     }
 
-    private void drawSpaceMarine(Graphics2D g2, int x, long y, int health, Color ownerColor, int alph) {
-        final int factorForEar = 4;
+    private void drawSpaceMarine(Graphics2D g2, double x, long y, int health, Color ownerColor, int alph) {
+        final int factorHealthForEar = 4;
         Color color = new Color(ownerColor.getRed(), ownerColor.getGreen(), ownerColor.getBlue(), alph);
         g2.setPaint(color);
-        Ellipse2D body = new Ellipse2D.Double(xCoordinatesFunc(x, convert(health)), yCoordinatesFunc(y, convert(health)), convert(health), convert(health));
+        Ellipse2D body = new Ellipse2D.Double(x, -y, health, health);
         g2.draw(body);
-        Ellipse2D rithEar = new Ellipse2D.Double(xCoordinatesFunc(x, convert(health)) - convert(health) / factorForEar, yCoordinatesFunc(y, convert(health)) - convert(health) / factorForEar, convert(health) / 2, convert(health) / 2);
+        Ellipse2D rithEar = new Ellipse2D.Double(x - health / factorHealthForEar, -y - health / factorHealthForEar, health / 2, health / 2);
         g2.draw(rithEar);
-        Ellipse2D leftEar = new Ellipse2D.Double(xCoordinatesFunc(x, convert(health)) + convert(health) / factorForEar, yCoordinatesFunc(y, convert(health)) - convert(health) / factorForEar, convert(health) / 2, convert(health) / 2);
+        Ellipse2D leftEar = new Ellipse2D.Double(x + health / factorHealthForEar * 3, - y - health / factorHealthForEar, health / 2, health / 2);
         g2.draw(leftEar);
-    }
-
-    private int convert(int health) {
-        return (int) factor * health + MIN_SIZE;
-    }
-
-    private int xCoordinatesFunc(int x, int width) {
-        return x - width / 2;
-    }
-
-    private int yCoordinatesFunc(long y, int height) {
-        return Long.valueOf(y - height / 2).intValue();
     }
 
     @Override
@@ -283,18 +239,17 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
             SpaceMarine spaceMarine = currentList.get(i);
             if (x <= spaceMarine.getCoordinates().getX() + spaceMarine.getHealth() && x >= spaceMarine.getCoordinates().getX() - spaceMarine.getHealth()
                     && y >= spaceMarine.getCoordinates().getY() - spaceMarine.getHealth() * HITBOX_LOW_POINT && y <= spaceMarine.getCoordinates().getY() + spaceMarine.getHealth() * Y_FIRST_POINT_NUMERATOR / 2) {
-
                 if (caeManager.getUsername().equals(spaceMarine.getOwnerName())) {
                     ChangeFieldsSpaceMarine changeFieldsOfSpaceMarinePanel = new ChangeFieldsSpaceMarine(caeManager, resourceBundle, spaceMarine);
                     changeFieldsOfSpaceMarinePanel.showJFrame();
                 } else {
                     JFrame subFrame = new JFrame();
                     JPanel mainPanel = new JPanel();
-                    JLabel jLabel = BasicGUIElementsFabric.createBasicLabel(resourceBundle.getString("It is not your spaceMarine"));
+                    JLabel jLabel = basicGUIElementsFabric.createBasicLabel(("It is not your spaceMarine"));
                     subFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                     mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
                     mainPanel.add(jLabel);
-                    JButton exitButton = BasicGUIElementsFabric.createBasicButton(resourceBundle.getString("OK"));
+                    JButton exitButton = basicGUIElementsFabric.createBasicButton(("OK"));
                     exitButton.setAlignmentX(CENTER_ALIGNMENT);
                     JPanel subPanel = new JPanel();
                     subPanel.setLayout(new GridBagLayout());
@@ -333,23 +288,27 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
 
     private static class RemovingSpaceMarine {
         private SpaceMarine spaceMarine;
-        private int tic = COUNTER_MAX;
+        private double x;
+        private long y;
+        private int tic = 0;
 
-        RemovingSpaceMarine(SpaceMarine spaceMarine) {
+        RemovingSpaceMarine(double x, long y, SpaceMarine spaceMarine) {
+            this.x = x;
+            this.y = y;
             this.spaceMarine = spaceMarine;
         }
     }
 
     private static class MovingSpaceMarine {
+        private SpaceMarine spaceMarine;
         private double x;
         private long y;
-        private final SpaceMarine spaceMarine;
-        private double health;
-        private int tic = COUNTER_MAX;
+        private int health;
+        private int tic = 0;
         private final double deltaX;
         private final long deltaY;
         private final double deltaHealth;
-        MovingSpaceMarine(int oldX, long oldY, int oldHealth, SpaceMarine spaceMarine) {
+        MovingSpaceMarine(double oldX, long oldY, int oldHealth, SpaceMarine spaceMarine) {
             this.x = oldX;
             this.y = oldY;
             this.spaceMarine = spaceMarine;
@@ -364,13 +323,13 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
         private SpaceMarine spaceMarine;
         private double x;
         private long y;
-        private double health;
-        private int tic = COUNTER_MAX;
-        ShowSpaceMarine(SpaceMarine spaceMarine) {
-            this.x = spaceMarine.getCoordinates().getX();
-            this.y = spaceMarine.getCoordinates().getY();
+        private int health;
+        private int tic = -100;
+        ShowSpaceMarine(double x, long y, int health, SpaceMarine spaceMarine) {
+            this.x = x;
+            this.y = y;
+            this.health = health;
             this.spaceMarine = spaceMarine;
-            this.health = spaceMarine.getHealth();
-    }
+        }
 }
 }

@@ -35,6 +35,7 @@ public class Resource_ru_RU extends ListResourceBundle {
             {"parentLegion", "легион"},
             {"marinesCount", "количество воинов"},
             {"world", "мир"},
+            {"ownername", "владелец"},
             {"increase", "по возрастанию"},
             {"decrease", "по убыванию"},
             {"equals", "равен"},
@@ -91,7 +92,24 @@ public class Resource_ru_RU extends ListResourceBundle {
             {"Russian", " Русский"},
             {"Portuguese", "Português"},
             {"Spanish", "Español"},
-            {"Catalan", "Català"}
+            {"Catalan", "Català"},
+            {"Number format is wrong", "Неверный формат числа"},
+            {"Русский", "Русский"},
+            {"Português", "Português"},
+            {"Español", "Español"},
+            {"Català", "Català"},
+            {"", ""},
+            {"SpaceMarine has been added.", "Воин добалвен"},
+            {"SpaceMarine already exists.", "Воин уже существует"},
+            {"Element is bigger than minimum.", "Элемент больше чем минимальный"},
+            {"Database broke down.", "База данных сломалась"},
+            {"SpaceMarine has been removed.", "Воин списан со счетов"},
+            {"Uknown Id or insufficient access rights.", "Неизвестный Id или это не ваш воин"},
+            {"All items have been successfully deleted.", "Все элементы удалены"},
+            {"No element has been deleted.", "Никто не удален"},
+            {"Marine has been successfully updated.", "Воин изменен"},
+            {"Id is not correct or insufficient access rights.", "Неверный Id или это не ваш воин"},
+            {"Connection lost", "Соединение потеряно"}
     };
 
     @Override
