@@ -37,6 +37,16 @@ public class BasicGUIElementsFabric {
         return jTextField;
     }
 
+    public JTextField createBasicJTextField(String text) {
+        JTextField jTextField = new JTextField();
+        jTextField.setText(text);
+        jTextField.setFont(Constants.MAIN_FONT);
+        jTextField.setBackground(Constants.SUB_COLOR);
+        jTextField.setBorder(new LineBorder(Constants.MAIN_COLOR, 1));
+        jTextField.setPreferredSize(new Dimension(Constants.TEXTFIELD_WIDTH, Constants.TEXTFIELD_HIGHT));
+        return jTextField;
+    }
+
     public JComboBox<String> createBasicComboBox(String[] elements) {
         String[] elementsLocal = new String[elements.length];
         for (int i = 0; i < elements.length; i++) {

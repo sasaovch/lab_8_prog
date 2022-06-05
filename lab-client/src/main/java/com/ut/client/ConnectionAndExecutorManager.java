@@ -20,8 +20,11 @@ import com.ut.common.util.Message;
 
 import exeptions.ConnectionLostExeption;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import util.ConstantsLanguage;
 
 @Getter
+@Slf4j
 public final class ConnectionAndExecutorManager {
     private static final int DEFAULT_TIME_OUT = 1000;
     private SendManager sendManager;
@@ -32,20 +35,20 @@ public final class ConnectionAndExecutorManager {
     private List<SpaceMarine> lastListSpaceMarines;
 
     {
-        commendsForGUI.add("help");
-        commendsForGUI.add("info");
-        commendsForGUI.add("show");
-        commendsForGUI.add("add");
-        commendsForGUI.add("add_if_min");
-        commendsForGUI.add("update");
-        commendsForGUI.add("remove_by_id");
-        commendsForGUI.add("remove_greater");
-        commendsForGUI.add("remove_lower");
-        commendsForGUI.add("group_counting_by_name");
-        commendsForGUI.add("print_descending");
-        commendsForGUI.add("count_by_loyal");
-        commendsForGUI.add("execute_script");
-        commendsForGUI.add("clear");
+        commendsForGUI.add(ConstantsLanguage.HELP_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.INFO_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.SHOW_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.ADD_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.ADD_IF_MIN_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.UPDATE_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.REMOVE_BY_ID_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.REMOVE_GREATER_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.REMOVE_LOWER_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.GROUP_COUNT_BY_NAME_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.PRINT_DESCENDING_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.COUNT_BY_LOAYL_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.EXECUTE_SCRIPT_COMMAND);
+        commendsForGUI.add(ConstantsLanguage.CLEAR_COMMAND);
     }
 
 
@@ -59,26 +62,26 @@ public final class ConnectionAndExecutorManager {
             receiveManager.setTimeout(DEFAULT_TIME_OUT);
             return tryConnect();
         } catch (UnknownHostException | SocketException | NumberFormatException e) {
-            System.out.println("Error in creating connection.");
+            log.info("Error in creating connection.");
         } catch (IOException e) {
-            System.out.println("Uppss... Something with input/output went wrong.");
+            log.info("Uppss... Something with input/output went wrong.");
         }
         return false;
     }
 
     private boolean tryConnect() throws IOException {
-        sendManager.sendMessage(new Message("connect_to_server", null));
+        sendManager.sendMessage(new Message(ConstantsLanguage.CONNECT_TO_SERVER_COMMAND, null));
         CommandResult result = receiveManager.receiveMessage();
         return Objects.nonNull(result);
     }
 
     public boolean login(String username, String password) throws ConnectionLostExeption {
         try {
-            Command command = commandManager.getCommand("login");
+            Command command = commandManager.getCommand(ConstantsLanguage.LOGIN_COMMAND);
             BodyCommand bodyCommand = command.requestBodyCommand(new String[]{username, password}, null);
             message = new Message();
             message.setBodyCommand(bodyCommand);
-            message.setCommand("login");
+            message.setCommand(ConstantsLanguage.LOGIN_COMMAND);
             sendManager.sendMessage(message);
             CommandResult result = receiveManager.receiveMessage();
             if (Objects.nonNull(result)) {
@@ -94,11 +97,11 @@ public final class ConnectionAndExecutorManager {
 
     public boolean signup(String username, String password) throws ConnectionLostExeption {
         try {
-            Command command = commandManager.getCommand("sign_up");
+            Command command = commandManager.getCommand(ConstantsLanguage.SIGN_UP_COMMAND);
             BodyCommand bodyCommand = command.requestBodyCommand(new String[]{username, password}, null);
             message = new Message();
             message.setBodyCommand(bodyCommand);
-            message.setCommand("sign_up");
+            message.setCommand(ConstantsLanguage.SIGN_UP_COMMAND);
             sendManager.sendMessage(message);
             CommandResult result = receiveManager.receiveMessage();
             if (Objects.nonNull(result)) {
@@ -135,15 +138,15 @@ public final class ConnectionAndExecutorManager {
             if (Objects.nonNull(result)) {
                 return result;
             }
-            return new CommandResult("error", null, false, "Connection was lost");
+            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, "Connection was lost");
         } catch (IOException e) {
-            return new CommandResult("error", null, false, "IOException");
+            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, "IOException");
         }
     }
 
     @SuppressWarnings({"unchecked"})
     public List<SpaceMarine> getListFromServer() throws ConnectionLostExeption {
-        CommandResult result = executeCommand("show", null, null);
+        CommandResult result = executeCommand(ConstantsLanguage.SHOW_COMMAND, null, null);
         if (Objects.isNull(result)) {
             throw new ConnectionLostExeption();
         }

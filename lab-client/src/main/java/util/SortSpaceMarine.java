@@ -25,13 +25,13 @@ public final class SortSpaceMarine {
                         break;
             case "creation Time" : returnlist = sortByCreationTime(listSpaceMar);
                         break;
-            case "coordinate x" : returnlist = sortByCoordinateX(listSpaceMar);
+            case "x" : returnlist = sortByCoordinateX(listSpaceMar);
                         break;
-            case "coordinate y" : returnlist = sortByCoordinateY(listSpaceMar);
+            case "y" : returnlist = sortByCoordinateY(listSpaceMar);
                         break;
             case "health" : returnlist = sortByHealth(listSpaceMar);
                         break;
-            case "heart count" : returnlist = sortByHeartCount(listSpaceMar);
+            case "heartCount" : returnlist = sortByHeartCount(listSpaceMar);
                         break;
             case "loyal" : returnlist = sortByLoyal(listSpaceMar);
                         break;
@@ -39,9 +39,9 @@ public final class SortSpaceMarine {
                         break;
             case "chapter" : returnlist = sortByChapter(listSpaceMar);
                         break;
-            case "parent Legion" : returnlist = sortByParentLegion(listSpaceMar);
+            case "parentLegion" : returnlist = sortByParentLegion(listSpaceMar);
                         break;
-            case "marines Count" : returnlist = sortByMarinesCount(listSpaceMar);
+            case "marinesCount" : returnlist = sortByMarinesCount(listSpaceMar);
                         break;
             default : returnlist = sortByWorld(listSpaceMar);
         }

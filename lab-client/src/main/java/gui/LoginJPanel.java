@@ -14,6 +14,7 @@ import com.ut.client.ConnectionAndExecutorManager;
 
 import exeptions.ConnectionLostExeption;
 import util.Constants;
+import util.ConstantsLanguage;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -82,18 +83,18 @@ public class LoginJPanel extends JPanel {
         add(submitButtonJPanel);
         add(errorFieldJPanel);
 
-        loginJLabe = basicGUIElementsFabric.createBasicLabel("Eneter your username");
+        loginJLabe = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.ENTER_USERNAME_MESSAGE);
         loginLabelJPanel.add(loginJLabe, BorderLayout.CENTER);
         loginJTextField = basicGUIElementsFabric.createBasicJTextField();
         loginTextFieldJPanel.add(loginJTextField);
-        passwordJLabel = basicGUIElementsFabric.createBasicLabel("Eneter your password");
+        passwordJLabel = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.ENTER_USERNAME_MESSAGE);
         passwordLabelJPanel.add(passwordJLabel, BorderLayout.CENTER);
         passwordJPasswordField = basicGUIElementsFabric.createBasicJPasswordFiled();
         passwordTextFieldJPanel.add(passwordJPasswordField);
-        loginJButton = basicGUIElementsFabric.createBasicButton("Log In");
+        loginJButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.LOG_IN_MESSAGE);
         setListenerForLoginButton();
         submitButtonJPanel.add(loginJButton);
-        signupJButton = basicGUIElementsFabric.createBasicButton("Sign Up");
+        signupJButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.SIGN_UP_MESSAGE);
         setListenerForSignUpButton();
         submitButtonJPanel.add(signupJButton);
     }
@@ -124,12 +125,12 @@ public class LoginJPanel extends JPanel {
                 try {
                     boolean answer = caeManager.login(username, password);
                     if (!answer) {
-                        printError(("Login or password is incorrect"));
+                        printError(ConstantsLanguage.INCORRECT_DATA);
                     } else {
                         guiManager.showTablePanel(resourceBundle);
                     }
                 } catch (ConnectionLostExeption e) {
-                    printError(("Error to connect to server"));
+                    printError(ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
                 }
             }
         });
@@ -144,12 +145,12 @@ public class LoginJPanel extends JPanel {
                 try {
                     boolean answer = caeManager.signup(username, password);
                     if (!answer) {
-                        printError(("This username is already used"));
+                        printError(ConstantsLanguage.DUBLICATE_USERNAME);
                     } else {
                         guiManager.showTablePanel(resourceBundle);
                     }
                 } catch (ConnectionLostExeption e) {
-                    printError(("Error to connect to server"));
+                    printError(ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
                 }
             }
         });

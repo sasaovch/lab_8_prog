@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Server",
+            "request": "launch",
+            "mainClass": "com.ut.server.Server",
+            "projectName": "lab-server"
+        },
+        {
+            "type": "java",
             "name": "Launch Ex",
             "request": "launch",
             "mainClass": "util.Ex",
@@ -16,7 +23,7 @@
             "name": "Launch Server",
             "request": "launch",
             "mainClass": "com.ut.server.serverWork.Server",
-            "projectName": "lab-server",
+            "projectName": "lab-server"
         },
         {
             "type": "java",

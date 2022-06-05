@@ -96,8 +96,8 @@ public class AddJPanel extends JPanel {
 
         loyaJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.TRUE, ConstantsLanguage.FALSE, ConstantsLanguage.FALSE});
         categoryJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.AGGRESSOR, ConstantsLanguage.HELIX, ConstantsLanguage.TACTICAL, ConstantsLanguage.INCEPTOR});
-        fieldText = basicGUIElementsFabric.createBasicLabel("Field", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        valueText = basicGUIElementsFabric.createBasicLabel("Value", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        fieldText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.FIELD, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        valueText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.VALUE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
         nameText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.NAME, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
         xText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.X, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
         yText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
@@ -109,16 +109,16 @@ public class AddJPanel extends JPanel {
         parentLegionText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.PARENT_LEGION, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
         marinesCountText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.MARINES_COUNT, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
         worldText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.WORLD, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        requirementText = basicGUIElementsFabric.createBasicLabel("Requirement", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        nameReq = basicGUIElementsFabric.createBasicLabel("Not empty", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        xReq = basicGUIElementsFabric.createBasicLabel("Any double", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        yReq = basicGUIElementsFabric.createBasicLabel("Not null", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        healthReq = basicGUIElementsFabric.createBasicLabel("Integer, >0", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        heartCountReq = basicGUIElementsFabric.createBasicLabel("Integer, 0<x<4", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        chapterReq = basicGUIElementsFabric.createBasicLabel("May be null", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        parentLegionReq = basicGUIElementsFabric.createBasicLabel("Any string", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        marinesCountReq = basicGUIElementsFabric.createBasicLabel("Integer, 0<x<1001", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
-        worldReq = basicGUIElementsFabric.createBasicLabel("Not empty", Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        requirementText = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.REQUIEMENT, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        nameReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.NOT_EMPTY, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        xReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.ANY_DOUBLE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        yReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.NOT_NULL, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        healthReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.INTEGER_GREATER_ZERO, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        heartCountReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.INTEGER_LOWER_FOUR, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        chapterReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.MAY_BE_NULL, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        parentLegionReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.ANY_STRING, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        marinesCountReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.INTEGER_LOWER_THOUSAND, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
+        worldReq = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.NOT_EMPTY, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT * 2);
     }
 
     private void setBorders() {
@@ -190,7 +190,7 @@ public class AddJPanel extends JPanel {
             final Integer health = argumentParser.parseArgFromString(healthField.getText(), SpaceMarineValidarot::healthValidator, Integer::parseInt);
             final Integer heartCount = argumentParser.parseArgFromString(heartCountField.getText(), SpaceMarineValidarot::heartCountValidator, Integer::parseInt);
             final Boolean loyal = argumentParser.parseArgFromString(loyaJComboBox.getSelectedItem().toString(), (s) -> true, createStringConverterBoolean());
-            String categoryEnglish = "";
+            String categoryEnglish = ConstantsLanguage.EMPTY_STRING;
             String bundleCategory = categoryJComboBox.getSelectedItem().toString();
             for (String key : resourceBundle.keySet()) {
                 if (resourceBundle.getString(key).equals(bundleCategory)) {
@@ -201,7 +201,7 @@ public class AddJPanel extends JPanel {
             AstartesCategory category = argumentParser.parseArgFromString(categoryEnglish, (s) -> true, AstartesCategory::valueOf);
             String chapter = argumentParser.parseArgFromString(chapterField.getText(), SpaceMarineValidarot::chapterValidator, s -> s);
             Chapter chapterSpMar;
-            if ("".equals(chapter)) {
+            if (ConstantsLanguage.EMPTY_STRING.equals(chapter)) {
                 chapterSpMar = null;
             } else {
                 String parentLegion = argumentParser.parseArgFromString(parentLegionField.getText(), SpaceMarineValidarot::parentLegiolValidator, s -> s);
@@ -272,10 +272,10 @@ public class AddJPanel extends JPanel {
         }
         categoryJComboBox.setSelectedItem(spaceMarine.getCategory().toString().toUpperCase());
         if (spaceMarine.getChapter() == null) {
-            chapterField.setText("");
-            parentLegionField.setText("");
-            marinesCountText.setText("");
-            worldField.setText("");
+            chapterField.setText(ConstantsLanguage.EMPTY_STRING);
+            parentLegionField.setText(ConstantsLanguage.EMPTY_STRING);
+            marinesCountField.setText(ConstantsLanguage.EMPTY_STRING);
+            worldField.setText(ConstantsLanguage.EMPTY_STRING);
         } else {
             chapterField.setText(spaceMarine.getChapter().getName());
             parentLegionField.setText(spaceMarine.getChapter().getParentLegion());

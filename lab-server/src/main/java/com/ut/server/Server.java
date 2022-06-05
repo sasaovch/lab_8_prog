@@ -1,4 +1,4 @@
-package com.ut.server.serverWork;
+package com.ut.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.ut.common.util.ParsFromEV;
+import com.ut.server.server.ServerApp;
 
 
 public final class Server {

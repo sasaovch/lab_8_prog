@@ -19,8 +19,4 @@ public class ArgumentParser {
                 throw new IllegalValueException();
             }
     }
-
-    // public boolean checkIfTheArgsEmpty(String readLine) {
-    //     return "".equals(readLine);
-    // }
 }

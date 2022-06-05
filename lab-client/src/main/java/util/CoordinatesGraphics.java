@@ -46,7 +46,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
     private static final int Y_FIRST_POINT_NUMERATOR = 3;
     private static final double HITBOX_LOW_POINT = 6 / 5.0;
     private static final int LINE_HIGHT = Constants.SCREEN_HEIGHT / 3;
-    private static final int LINE_WiDHT = Constants.SCREEN_WIDTH / 7 * 3;
+    private static final int LINE_WIDHT = Constants.SCREEN_WIDTH / 7 * 3;
     private static final int TIME_DELAY = 15;
 
     private HashMap<String, Color> usersAndColors = new HashMap<>();
@@ -100,7 +100,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
         try {
             newList = caeManager.getListFromServer();
         } catch (ConnectionLostExeption e) {
-            printerror("Connection lost");
+            printerror(ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
             return;
         }
         for (SpaceMarine oldSpaceMarine : currentList) {
@@ -142,7 +142,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
         Graphics2D g2 = (Graphics2D) g;
         g2.translate(Constants.SCREEN_WIDTH / 2, Constants.CENTER_PANEL_HEIGHT / 3 * 2);
         g2.setStroke(new BasicStroke(BASIC_STROKE));
-        g2.drawLine(-LINE_WiDHT, 0, LINE_WiDHT, 0);
+        g2.drawLine(-LINE_WIDHT, 0, LINE_WIDHT, 0);
         g2.drawLine(0, -LINE_HIGHT, 0, LINE_HIGHT);
         updateDelay--;
         if (updateDelay == 0) {
@@ -165,7 +165,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
     private void showSpaceMarines(Graphics2D g2) {
         for (ShowSpaceMarine showingSpaceMarine : showSpaceMarineList) {
             Color color;
-            SpaceMarine spaceMarine = showSpaceMarineList.get(0).spaceMarine;
+            SpaceMarine spaceMarine = showingSpaceMarine.spaceMarine;
             if (usersAndColors.containsKey(spaceMarine.getOwnerName())) {
                 color = usersAndColors.get(spaceMarine.getOwnerName());
             } else {
@@ -184,7 +184,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
                 return;
             }
             color = usersAndColors.get(showingSpaceMarine.spaceMarine.getOwnerName());
-            double gap = ((LINE_WiDHT + showingSpaceMarine.x) / COUNTER_MAX * showingSpaceMarine.tic) - LINE_WiDHT;
+            double gap = ((LINE_WIDHT + showingSpaceMarine.x) / COUNTER_MAX * showingSpaceMarine.tic) - LINE_WIDHT;
             drawSpaceMarine(g2, gap, showingSpaceMarine.y, showingSpaceMarine.health, color, MAX_ALPHA);
         }
     }
@@ -199,7 +199,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
                 return;
             }
             color = usersAndColors.get(removingSpaceMarine.spaceMarine.getOwnerName());
-            double gap = (-(LINE_WiDHT + removingSpaceMarine.x) / COUNTER_MAX * removingSpaceMarine.tic) + removingSpaceMarine.x;
+            double gap = (-(LINE_WIDHT + removingSpaceMarine.x) / COUNTER_MAX * removingSpaceMarine.tic) + removingSpaceMarine.x;
             drawSpaceMarine(g2, gap, removingSpaceMarine.y, (int) removingSpaceMarine.spaceMarine.getHealth(), color, MAX_ALPHA);
         }
     }
@@ -227,7 +227,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
         g2.draw(body);
         Ellipse2D rithEar = new Ellipse2D.Double(x - health / factorHealthForEar, -y - health / factorHealthForEar, health / 2, health / 2);
         g2.draw(rithEar);
-        Ellipse2D leftEar = new Ellipse2D.Double(x + health / factorHealthForEar * 3, - y - health / factorHealthForEar, health / 2, health / 2);
+        Ellipse2D leftEar = new Ellipse2D.Double(x + health / factorHealthForEar * 3, -y - health / factorHealthForEar, health / 2, health / 2);
         g2.draw(leftEar);
     }
 
@@ -245,11 +245,11 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
                 } else {
                     JFrame subFrame = new JFrame();
                     JPanel mainPanel = new JPanel();
-                    JLabel jLabel = basicGUIElementsFabric.createBasicLabel(("It is not your spaceMarine"));
+                    JLabel jLabel = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.NOT_YOUR_SPMAR_MESSAGE);
                     subFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                     mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
                     mainPanel.add(jLabel);
-                    JButton exitButton = basicGUIElementsFabric.createBasicButton(("OK"));
+                    JButton exitButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.OK);
                     exitButton.setAlignmentX(CENTER_ALIGNMENT);
                     JPanel subPanel = new JPanel();
                     subPanel.setLayout(new GridBagLayout());
@@ -324,7 +324,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
         private double x;
         private long y;
         private int health;
-        private int tic = -100;
+        private int tic = -COUNTER_MAX;
         ShowSpaceMarine(double x, long y, int health, SpaceMarine spaceMarine) {
             this.x = x;
             this.y = y;

@@ -59,8 +59,6 @@ public class CommandModeJPanel extends JPanel {
     private JTextArea textResult;
     private JScrollPane scrollText;
 
-// TODO Is it good to initialize field here?;
-
     private GUIManager guiManager;
     private ConnectionAndExecutorManager caeManager;
     private ResourceBundle resourceBundle;
@@ -76,8 +74,8 @@ public class CommandModeJPanel extends JPanel {
     }
 
     public void initElements() {
-        chooseCommLabel = basicGUIElementsFabric.createBasicLabel("Choose command");
-        resultOfCommandWithSpMar = basicGUIElementsFabric.createBasicLabel("");
+        chooseCommLabel = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.CHOOSE_COMMAND);
+        resultOfCommandWithSpMar = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.EMPTY_STRING);
         listToChooseLanguage = basicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
         listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
         addJPanel = new AddJPanel(resourceBundle);
@@ -96,7 +94,7 @@ public class CommandModeJPanel extends JPanel {
         userJButton.setText((caeManager.getUsername()));
         userJButton.setBackground(Constants.SUB_COLOR);
         userJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        submitJOperation = basicGUIElementsFabric.createBasicButton("push");
+        submitJOperation = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.PUSH);
         centerJPanel = new JPanel();
         northJPanel = new JPanel();
         resultJPanel = new JPanel();
@@ -171,7 +169,7 @@ public class CommandModeJPanel extends JPanel {
                 yesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 JButton noButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.NO);
                 noButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                JLabel label = basicGUIElementsFabric.createBasicLabel("Do you want exit?");
+                JLabel label = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.EXIT_QUESTION);
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 yesButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -202,36 +200,58 @@ public class CommandModeJPanel extends JPanel {
                 northJPanel.add(commandsJComboBox);
                 northJPanel.add(submitJOperation);
                 argumentJPanel.removeAll();
-                if (resourceBundle.getString("add").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("add_if_min").equals(commandsJComboBox.getSelectedItem().toString())
-                    || resourceBundle.getString("remove_greater").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_lower").equals(commandsJComboBox.getSelectedItem().toString())
-                    || resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString())) {
-                        if (resourceBundle.getString("update").equals(commandsJComboBox.getSelectedItem().toString())) {
-                            argumentTextField.setEditable(true);
-                            northJPanel.add(argumentTextField);
-                        } else {
-                            argumentTextField.setEditable(false);
-                        }
-                    argumentJPanel.add(addJPanel);
-                } else if (resourceBundle.getString("execute_script").equals(commandsJComboBox.getSelectedItem().toString())) {
-                    argumentJPanel.add(executeScriptFileChooser);
-                } else if (resourceBundle.getString("count_by_loyal").equals(commandsJComboBox.getSelectedItem().toString())) {
-                    argumentJPanel.add(scrollText);
-                    northJPanel.add(loyalBoxJComboBox);
-                } else {
-                    if (resourceBundle.getString("remove_by_id").equals(commandsJComboBox.getSelectedItem().toString())) {
-                        argumentTextField.setEditable(true);
-                    } else {
-                        argumentTextField.setEditable(false);
-                    }
-                    argumentJPanel.add(scrollText);
-                    northJPanel.add(argumentTextField);
-                }
-                northJPanel.add(typeOfViewJComboBox);
-                northJPanel.add(listToChooseLanguage);
-                northJPanel.add(userJButton);
-                guiManager.reloadMainScreen();
+                showNeededPanelsForCommand(commandsJComboBox.getSelectedItem().toString());
             }
         });
+    }
+
+    private void showNeededPanelsForCommand(String command) {
+        boolean returnStatus = false;
+        if (resourceBundle.getString(ConstantsLanguage.ADD_COMMAND).equals(command) || resourceBundle.getString(ConstantsLanguage.ADD_IF_MIN_COMMAND).equals(command)
+            || resourceBundle.getString(ConstantsLanguage.REMOVE_GREATER_COMMAND).equals(command) || resourceBundle.getString(ConstantsLanguage.REMOVE_LOWER_COMMAND).equals(command)) {
+                    argumentTextField.setEditable(false);
+                    argumentJPanel.add(addJPanel);
+                    updateNorthPanel();
+                    returnStatus = true;
+        }
+        if (resourceBundle.getString(ConstantsLanguage.UPDATE_COMMAND).equals(command)) {
+                    argumentTextField.setEditable(true);
+                    northJPanel.add(argumentTextField);
+                    argumentJPanel.add(addJPanel);
+                    updateNorthPanel();
+                    returnStatus = true;
+        }
+        if (resourceBundle.getString(ConstantsLanguage.EXECUTE_SCRIPT_COMMAND).equals(command)) {
+                    argumentJPanel.add(executeScriptFileChooser);
+                    updateNorthPanel();
+                    returnStatus = true;
+        }
+        if (resourceBundle.getString(ConstantsLanguage.COUNT_BY_LOAYL_COMMAND).equals(command)) {
+                    argumentJPanel.add(scrollText);
+                    northJPanel.add(loyalBoxJComboBox);
+                    updateNorthPanel();
+                    returnStatus = true;
+        }
+        if (resourceBundle.getString(ConstantsLanguage.REMOVE_BY_ID_COMMAND).equals(command)) {
+                argumentTextField.setEditable(true);
+                argumentJPanel.add(scrollText);
+                northJPanel.add(argumentTextField);
+                updateNorthPanel();
+                returnStatus = true;
+        }
+        if (!returnStatus) {
+            argumentTextField.setEditable(false);
+            argumentJPanel.add(scrollText);
+            northJPanel.add(argumentTextField);
+            updateNorthPanel();
+        }
+    }   
+
+    private void updateNorthPanel() {
+        northJPanel.add(typeOfViewJComboBox);
+        northJPanel.add(listToChooseLanguage);
+        northJPanel.add(userJButton);
+        guiManager.reloadMainScreen();  
     }
 
     private String findRightCommand() {
@@ -253,7 +273,7 @@ public class CommandModeJPanel extends JPanel {
                 SpaceMarine spMar = null;
                 spMar = addJPanel.getSpaceMarine();
                 String commandToExecute = findRightCommand();
-                if (resourceBundle.getString("add").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("add_if_min").equals(commandsJComboBox.getSelectedItem().toString())|| resourceBundle.getString("remove_greater").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_lower").equals(commandsJComboBox.getSelectedItem().toString())) {
+                if (resourceBundle.getString("add").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("add_if_min").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_greater").equals(commandsJComboBox.getSelectedItem().toString()) || resourceBundle.getString("remove_lower").equals(commandsJComboBox.getSelectedItem().toString())) {
                     if (spMar == null) {
                         printError(("Invalid arguments"));
                         return;

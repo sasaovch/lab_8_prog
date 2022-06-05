@@ -18,6 +18,7 @@ import com.ut.common.commands.CommandResult;
 import com.ut.common.data.SpaceMarine;
 
 import util.Constants;
+import util.ConstantsLanguage;
 
 public class ChangeFieldsSpaceMarine extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -36,7 +37,7 @@ public class ChangeFieldsSpaceMarine extends JFrame {
         this.caeManager = caeManager;
         this.oldSpaceMarine = spaceMarine;
         basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
-        errorJLabe = basicGUIElementsFabric.createBasicLabel("");
+        errorJLabe = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.EMPTY_STRING);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setExtendedState(Frame.MAXIMIZED_BOTH);
         setSize(new Dimension(Constants.SCREEN_WIDTH / PART_OF_SCREEN, Constants.SCREEN_HEIGHT / PART_OF_SCREEN));
@@ -47,10 +48,10 @@ public class ChangeFieldsSpaceMarine extends JFrame {
         submitButton.addActionListener(e -> {
                 SpaceMarine spaceMarine = addJPanel.getSpaceMarine();
                 if (Objects.isNull(spaceMarine)) {
-                    printerror("Invalid arguments");
+                    printerror(ConstantsLanguage.INVALID_ARGUMENTS);
                 } else {
                     spaceMarine.setID(oldSpaceMarine.getID());
-                    CommandResult result = caeManager.executeCommand("update", spaceMarine, spaceMarine.getID());
+                    CommandResult result = caeManager.executeCommand(ConstantsLanguage.UPDATE_COMMAND, spaceMarine, spaceMarine.getID());
                     southJPanel.add(basicGUIElementsFabric.createBasicLabel(result.getMessageResult()));
                     revalidate();
                     repaint();
@@ -62,7 +63,7 @@ public class ChangeFieldsSpaceMarine extends JFrame {
     private void initElements() {
         southJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
         southJPanel.setLayout(new FlowLayout(FlowLayout.CENTER, Constants.VGAP, Constants.HGAP));
-        submitButton = basicGUIElementsFabric.createBasicButton("submit");
+        submitButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.SUBMIT);
 
         centerJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
         addJPanel = new AddJPanel(resourceBundle);

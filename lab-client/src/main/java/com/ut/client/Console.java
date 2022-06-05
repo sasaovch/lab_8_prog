@@ -11,6 +11,7 @@ import com.ut.common.util.IOManager;
 import com.ut.common.util.Message;
 
 import lombok.Getter;
+import util.ConstantsLanguage;
 
 @Getter
 public class Console {
@@ -60,7 +61,7 @@ public class Console {
                     isWorkState = false;
                 }
             }
-            ioManager.println("Incorrect command in file");
+            ioManager.println(ConstantsLanguage.ERROR_IN_FILE_MESSAGE);
         }
     }
 
@@ -68,16 +69,10 @@ public class Console {
         Command command = commandManager.getCommand(name);
         if (Objects.isNull(command)) {
             if (ioManager.getFileMode()) {
-                ioManager.printerr("Unknow command in file.");
+                ioManager.printerr(ConstantsLanguage.UNKNOW_COMMAND_EX_MESSAGE);
                 ioManager.turnOffFileMode();
                 return null;
-            } else {
-                ioManager.printerr("Unknown commands. Print help for getting info about commands");
-                return null;
             }
-        }
-        if ("exit".equals(name)) {
-            isWorkState = false;
         }
         return command;
     }

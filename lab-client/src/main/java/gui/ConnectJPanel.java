@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import com.ut.client.ConnectionAndExecutorManager;
 
 import util.Constants;
+import util.ConstantsLanguage;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -79,18 +80,18 @@ public class ConnectJPanel extends JPanel {
         add(submitButtonJPanel);
         add(errorFieldJPanel);
 
-        addressJLabel = basicGUIElementsFabric.createBasicLabel("Eneter host address");
+        addressJLabel = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.ENTER_ADDRESS_MESSAGE);
         addressLabelJPanel.add(addressJLabel, BorderLayout.CENTER);
 
         addressJTextField = basicGUIElementsFabric.createBasicJTextField();
         addressTextFieldJPanel.add(addressJTextField, BorderLayout.CENTER);
 
-        portLabel = basicGUIElementsFabric.createBasicLabel("Eneter host port");
+        portLabel = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.ENTER_PORT_MESSAGE);
         portLabelJPanel.add(portLabel, BorderLayout.CENTER);
-    
+
         portJTextField = basicGUIElementsFabric.createBasicJTextField();
         portTextFielJdPanel.add(portJTextField, BorderLayout.CENTER);
-        submitJButton = basicGUIElementsFabric.createBasicButton("connect");
+        submitJButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.CONNECT);
         submitJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH * 2, Constants.BUTTON_HEIGHT));
         setConnectionListenerForFirstSubmitButton();
         submitButtonJPanel.add(submitJButton, BorderLayout.CENTER);
@@ -124,7 +125,7 @@ public class ConnectJPanel extends JPanel {
                 String port = portJTextField.getText();
                 boolean answer = caeManager.connectToServer(address, port);
                 if (!answer) {
-                    printError("Error to connect to server");
+                    printError(ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
                 } else {
                     guiManager.showLoginPanel(resourceBundle);
                 }

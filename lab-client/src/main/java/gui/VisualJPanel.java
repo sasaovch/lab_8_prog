@@ -55,9 +55,7 @@ public class VisualJPanel extends JPanel {
         initElements();
     }
 
-    public void initElements() {
-        listToChooseLanguage = basicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
-
+    private void initElements() {
         typeOfView = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.VISUAL_VIEW, ConstantsLanguage.COMMAND_PANEL, ConstantsLanguage.TABLE_VIEW});
 
         userJButton = new JButton();
@@ -65,14 +63,10 @@ public class VisualJPanel extends JPanel {
         userJButton.setText((caeManager.getUsername()));
         userJButton.setBackground(Constants.SUB_COLOR);
         userJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
-        reloadJButton = basicGUIElementsFabric.createBasicButton(("reload"));
+        reloadJButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.RELOAD);
 
         centerPanel = new JPanel();
         northPanel = new JPanel();
-
-        listToChooseLanguage.setFont(Constants.MAIN_FONT);
-        listToChooseLanguage.setBackground(Constants.SUB_COLOR);
-        listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
 
         setSettingsForElements();
         setListenerForReloadButton();
@@ -85,17 +79,17 @@ public class VisualJPanel extends JPanel {
         printGraphics();
     }
 
-    public void setListenerForUserButton() {
+    private void setListenerForUserButton() {
         userJButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFrame exitFrame = new JFrame();
                 Container pane = exitFrame.getContentPane();
                 pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-                JButton yesButton = basicGUIElementsFabric.createBasicButton("YES");
+                JButton yesButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.YES);
                 yesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                JButton noButton = basicGUIElementsFabric.createBasicButton("NO");
+                JButton noButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.NO);
                 noButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                JLabel label = basicGUIElementsFabric.createBasicLabel("Do you want exit?");
+                JLabel label = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.EXIT_QUESTION);
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 yesButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -120,9 +114,9 @@ public class VisualJPanel extends JPanel {
     public void setListenerForTypeOfViewBox() {
         typeOfView.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (resourceBundle.getString("Table View").equals(typeOfView.getSelectedItem().toString())) {
+                if (resourceBundle.getString(ConstantsLanguage.TABLE_VIEW).equals(typeOfView.getSelectedItem().toString())) {
                     guiManager.showTablePanel(resourceBundle);
-                } else if (resourceBundle.getString("Command Panel").equals(typeOfView.getSelectedItem().toString())) {
+                } else if (resourceBundle.getString(ConstantsLanguage.COMMAND_PANEL).equals(typeOfView.getSelectedItem().toString())) {
                     guiManager.showCommandPanel(resourceBundle);
                 }
             }
@@ -160,6 +154,10 @@ public class VisualJPanel extends JPanel {
     }
 
     private void setSettingForLanguagesList() {
+        listToChooseLanguage = basicGUIElementsFabric.createBasicComboBox(Constants.LANGUAGES);
+        listToChooseLanguage.setFont(Constants.MAIN_FONT);
+        listToChooseLanguage.setBackground(Constants.SUB_COLOR);
+        listToChooseLanguage.setSelectedItem(Constants.getNameByBundle(resourceBundle));
         listToChooseLanguage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

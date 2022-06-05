@@ -27,11 +27,11 @@ public final class FilterSpaceMarine {
             case "creation Time" :
                         returnlist = filterByCreationTime(listSpaceMar, typeFilter, ConverterToBundle.parseDateTime(value));
                         break;
-            case "coordinate x" :
+            case "x" :
                         Double valueX = Double.parseDouble(value);
                         returnlist = filterByCoordinateX(listSpaceMar, typeFilter, valueX);
                         break;
-            case "coordinate y" :
+            case "y" :
                         Long valueY = Long.parseLong(value);
                         returnlist = filterByCoordinateY(listSpaceMar, typeFilter, valueY);
                         break;
@@ -39,7 +39,7 @@ public final class FilterSpaceMarine {
                         Integer valueHealth = Integer.parseInt(value);
                         returnlist = filterByHealth(listSpaceMar, typeFilter, valueHealth);
                         break;
-            case "heart count" :
+            case "heartCount" :
                         Integer valueHeartCount = Integer.parseInt(value);
                         returnlist = filterByHeartCount(listSpaceMar, typeFilter, valueHeartCount);
                         break;
@@ -67,10 +67,10 @@ public final class FilterSpaceMarine {
             case "chapter" :
                         returnlist = filterByChapter(listSpaceMar, typeFilter, value);
                         break;
-            case "parent Legion" :
+            case "parentLegion" :
                         returnlist = filterByParentLegion(listSpaceMar, typeFilter, value);
                         break;
-            case "marines Count" :
+            case "marinesCount" :
                         Long valueMarinesCount = Long.parseLong(value);
                         returnlist = filterByMarinesCount(listSpaceMar, typeFilter, valueMarinesCount);
                         break;

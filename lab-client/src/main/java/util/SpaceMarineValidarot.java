@@ -12,6 +12,7 @@ public final class SpaceMarineValidarot implements Serializable {
     private static boolean isChapterNull;
 
     private SpaceMarineValidarot() {
+        throw new UnsupportedOperationException();
     }
 
     public static boolean nameValidator(String name) {

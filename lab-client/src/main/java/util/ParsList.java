@@ -24,6 +24,7 @@ public final class ParsList {
     private static final int WORLD_COUNT_INDEX = 12;
     private static final int OWNER_COUNT_INDEX = 13;
     private ParsList() {
+        throw new UnsupportedOperationException();
     }
     public static String[][] parseList(List<SpaceMarine> list, ResourceBundle resourceBundle) {
         Locale locale = resourceBundle.getLocale();
