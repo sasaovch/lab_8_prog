@@ -257,6 +257,10 @@ public class SQLSpMarCollManager implements CollectionManager {
 
     @Override
     public ResultStatusWorkWithColl updateSpaceMarine(SpaceMarine newMarine, Long id) {
+        if (!spaceMarineCollection.updateSpaceMarine(newMarine, id)) {
+            System.out.println("updateSpaceMarien");
+            return ResultStatusWorkWithColl.False;
+        }
         final int indexOfCoordId = 3;
         final int indexOfSpMarId = 9;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -286,8 +290,9 @@ public class SQLSpMarCollManager implements CollectionManager {
             prepareStatSpMar(statSpMar, newMarine);
             statSpMar.setLong(indexOfSpMarId, id);
             int count = statSpMar.executeUpdate();
-            if (count > 0) {
-                spaceMarineCollection.updateSpaceMarine(newMarine, id);
+            if (count == 0) {
+                spaceMarineCollection.removeById(id);
+                return ResultStatusWorkWithColl.False;
             }
             return ResultStatusWorkWithColl.True;
         } catch (SQLException e) {

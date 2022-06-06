@@ -9,9 +9,9 @@ import com.ut.common.commands.CommandManager;
 import com.ut.common.util.BodyCommand;
 import com.ut.common.util.IOManager;
 import com.ut.common.util.Message;
+import com.ut.util.ConstantsLanguage;
 
 import lombok.Getter;
-import util.ConstantsLanguage;
 
 @Getter
 public class Console {

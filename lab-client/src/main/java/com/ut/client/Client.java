@@ -1,6 +1,6 @@
 package com.ut.client;
 
-import gui.MainJFrame;
+import com.ut.gui.MainJFrame;
 
 public final class Client {
     private Client() {

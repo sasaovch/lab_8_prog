@@ -86,6 +86,7 @@ public class ServerApp {
         CommandResult result;
         if (command.requiresAuthen()) {
             if (mess.getUser().getAuthenticationStatus()) {
+                log.info(mess.getUser().getUsername() + " " + mess.getUser().getAuthenticationStatus());
                 result = command.run(data, mess.getUser());
             } else {
                 log.info(mess.getUser().getUsername() + " " + mess.getUser().getAuthenticationStatus());

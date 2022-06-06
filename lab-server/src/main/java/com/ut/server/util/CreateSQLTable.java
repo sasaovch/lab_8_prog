@@ -51,6 +51,7 @@ public final class CreateSQLTable {
             Statement stat = connectionDB.createStatement();
             stat.execute(createTableQuery);
         } catch (SQLException e) {
+            System.out.println("Type astartes_catergory already exists");
         }
     }
 

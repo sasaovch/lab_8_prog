@@ -6,23 +6,16 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch Server",
+            "name": "Launch MainJFrame",
             "request": "launch",
-            "mainClass": "com.ut.server.Server",
-            "projectName": "lab-server"
-        },
-        {
-            "type": "java",
-            "name": "Launch Ex",
-            "request": "launch",
-            "mainClass": "util.Ex",
+            "mainClass": "com.ut.gui.MainJFrame",
             "projectName": "lab-client"
         },
         {
             "type": "java",
             "name": "Launch Server",
             "request": "launch",
-            "mainClass": "com.ut.server.serverWork.Server",
+            "mainClass": "com.ut.server.server.Server",
             "projectName": "lab-server"
         },
         {
@@ -37,19 +30,12 @@
             "request": "launch",
             "mainClass": "com.ut.client.Client",
             "projectName": "lab-client"
-        },
-        {
-            "type": "java",
-            "name": "Launch MainJFrame",
-            "request": "launch",
-            "mainClass": "gui.MainJFrame",
-            "projectName": "lab-client"
         }
     ],
     "compounds": [
         {
             "name": "Compound",
-            "configurations": ["Launch MainJFrame", "Launch Server", "Launch MainJFrame"]
+            "configurations": ["Launch Client", "Launch Server"]
         }
     ]
 }

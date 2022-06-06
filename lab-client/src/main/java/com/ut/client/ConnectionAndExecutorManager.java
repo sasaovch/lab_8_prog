@@ -17,11 +17,11 @@ import com.ut.common.data.User;
 import com.ut.common.util.BodyCommand;
 import com.ut.common.util.BodyCommandWithSpMar;
 import com.ut.common.util.Message;
+import com.ut.exeptions.ConnectionLostExeption;
+import com.ut.util.ConstantsLanguage;
 
-import exeptions.ConnectionLostExeption;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import util.ConstantsLanguage;
 
 @Getter
 @Slf4j
@@ -125,9 +125,9 @@ public final class ConnectionAndExecutorManager {
             if (Objects.nonNull(result)) {
                 return result;
             }
-            return new CommandResult("error", null, false, "Connection was lost");
+            return new CommandResult("error", null, false, ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
         } catch (IOException e) {
-            return new CommandResult("error", null, false, "IOException");
+            return new CommandResult("error", null, false, ConstantsLanguage.IOEXCEPTION);
         }
     }
 
@@ -138,9 +138,9 @@ public final class ConnectionAndExecutorManager {
             if (Objects.nonNull(result)) {
                 return result;
             }
-            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, "Connection was lost");
+            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
         } catch (IOException e) {
-            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, "IOException");
+            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, ConstantsLanguage.IOEXCEPTION);
         }
     }
 

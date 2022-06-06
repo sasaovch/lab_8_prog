@@ -26,8 +26,8 @@ public class UpdateCommand extends Command {
             return new CommandResult("update", null, false, "There are no such element in the collection.");
         }
         switch (collectionManager.updateSpaceMarine(newSpaceMarine, id)) {
-            case True : return new CommandResult("update", null, true, "Marine has been successfully updated.");
-            case False :  return new CommandResult("update", null, false, "Id is not correct or insufficient access rights.");
+            case True : return new CommandResult("update", newSpaceMarine, true, "Marine has been successfully updated.");
+            case False :  return new CommandResult("update", null, false, "Id is not correct or insufficient access rights or dublicated elements.");
             default :  return new CommandResult("update", null, false, "Database broke down.");
         }
     }
