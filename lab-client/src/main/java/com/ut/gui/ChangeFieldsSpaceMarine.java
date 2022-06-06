@@ -55,6 +55,8 @@ public class ChangeFieldsSpaceMarine extends JFrame {
                     if (result.getResultStatus()) {
                         System.out.println(result.getResultStatus());
                         System.out.println(result.getMessageResult());
+                        SpaceMarine sp = (SpaceMarine) result.getData();
+                        System.out.println(sp);
                         guiManager.addRowToTable((SpaceMarine)result.getData());
                         dispose();
                     } else {

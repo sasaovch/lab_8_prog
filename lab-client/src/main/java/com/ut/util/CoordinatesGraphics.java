@@ -74,6 +74,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
     public CoordinatesGraphics(GUIManager guiManager, ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
         this.caeManager = caeManager;
         this.resourceBundle = resourceBundle;
+        this.guiManager = guiManager;
         basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
         currentList = new ArrayList<>();
         setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
@@ -244,8 +245,8 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
             if (x <= spaceMarine.getCoordinates().getX() + spaceMarine.getHealth() && x >= spaceMarine.getCoordinates().getX() - spaceMarine.getHealth()
                     && y >= spaceMarine.getCoordinates().getY() - spaceMarine.getHealth() * HITBOX_LOW_POINT && y <= spaceMarine.getCoordinates().getY() + spaceMarine.getHealth() * Y_FIRST_POINT_NUMERATOR / 2) {
                 if (caeManager.getUsername().equals(spaceMarine.getOwnerName())) {
-                    ChangeFieldsSpaceMarine changeFieldsOfSpaceMarinePanel = new ChangeFieldsSpaceMarine(guiManager, caeManager, resourceBundle, spaceMarine);
-                    changeFieldsOfSpaceMarinePanel.showJFrame();
+                    ChangeFieldsSpaceMarine changeFieldsOfSpaceMarinePanel = new ChangeFieldsSpaceMarine(guiManager, caeManager, resourceBundle);
+                    changeFieldsOfSpaceMarinePanel.showJFrame(spaceMarine);
                 } else {
                     JFrame subFrame = new JFrame();
                     JPanel mainPanel = new JPanel();
