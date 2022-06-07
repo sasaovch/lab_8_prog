@@ -11,6 +11,7 @@ import com.ut.common.data.SpaceMarine;
 
 public final class FilterSpaceMarine {
     private FilterSpaceMarine() {
+        throw new UnsupportedOperationException();
     }
 
     public static List<SpaceMarine> filterList(String field, String typeFilter, String value, List<SpaceMarine> listSpaceMar) {

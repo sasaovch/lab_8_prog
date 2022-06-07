@@ -32,10 +32,12 @@ public class ChangeFieldsSpaceMarine extends JFrame {
     private SpaceMarine oldSpaceMarine;
     private BasicGUIElementsFabric basicGUIElementsFabric;
     private GUIManager guiManager;
-    public ChangeFieldsSpaceMarine(GUIManager guiManager, ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle) {
+    private boolean needToUpdateTable;
+    public ChangeFieldsSpaceMarine(GUIManager guiManager, ConnectionAndExecutorManager caeManager, ResourceBundle resourceBundle, boolean needToUpdateTable) {
         this.resourceBundle = resourceBundle;
         this.caeManager = caeManager;
         this.guiManager = guiManager;
+        this.needToUpdateTable = needToUpdateTable;
         basicGUIElementsFabric = new BasicGUIElementsFabric(resourceBundle);
         errorJLabe = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.EMPTY_STRING);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -57,7 +59,9 @@ public class ChangeFieldsSpaceMarine extends JFrame {
                         System.out.println(result.getMessageResult());
                         SpaceMarine sp = (SpaceMarine) result.getData();
                         System.out.println(sp);
-                        guiManager.addRowToTable((SpaceMarine)result.getData());
+                        if (needToUpdateTable) {
+                            guiManager.addRowToTable((SpaceMarine)result.getData());
+                        }
                         dispose();
                     } else {
                         printerror(result.getMessageResult());

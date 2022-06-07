@@ -11,6 +11,7 @@ import com.ut.common.data.SpaceMarine;
 
 public final class SortSpaceMarine {
     private SortSpaceMarine() {
+        throw new UnsupportedOperationException();
     }
 
     public static List<SpaceMarine> sortSpaceMarines(String field, String typeFilter, List<SpaceMarine> listSpaceMar) {

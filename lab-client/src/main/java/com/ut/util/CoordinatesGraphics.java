@@ -245,7 +245,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
             if (x <= spaceMarine.getCoordinates().getX() + spaceMarine.getHealth() && x >= spaceMarine.getCoordinates().getX() - spaceMarine.getHealth()
                     && y >= spaceMarine.getCoordinates().getY() - spaceMarine.getHealth() * HITBOX_LOW_POINT && y <= spaceMarine.getCoordinates().getY() + spaceMarine.getHealth() * Y_FIRST_POINT_NUMERATOR / 2) {
                 if (caeManager.getUsername().equals(spaceMarine.getOwnerName())) {
-                    ChangeFieldsSpaceMarine changeFieldsOfSpaceMarinePanel = new ChangeFieldsSpaceMarine(guiManager, caeManager, resourceBundle);
+                    ChangeFieldsSpaceMarine changeFieldsOfSpaceMarinePanel = new ChangeFieldsSpaceMarine(guiManager, caeManager, resourceBundle, false);
                     changeFieldsOfSpaceMarinePanel.showJFrame(spaceMarine);
                 } else {
                     JFrame subFrame = new JFrame();

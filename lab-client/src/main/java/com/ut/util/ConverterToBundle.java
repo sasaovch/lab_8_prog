@@ -18,7 +18,8 @@ public final class ConverterToBundle {
 
     public static LocalDateTime parseDateTime(String date) {
         DateTimeFormatter parser = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss");
-            return LocalDateTime.parse(date, parser);
+        System.out.println(date);
+        return LocalDateTime.parse(date, parser);
     }
 
     public static String formatDateTime(TemporalAccessor dateToFormat, Locale locale) {

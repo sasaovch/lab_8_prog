@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import com.ut.common.commands.CommandResult;
+import com.ut.util.ConstantsLanguage;
 
 
 public class ReceiveManager {
@@ -35,7 +36,7 @@ public class ReceiveManager {
         } catch (SocketTimeoutException e) {
             return null;
         } catch (ClassNotFoundException e) {
-            return new CommandResult("error", null, false, "Data is corrupted.");
+            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, ConstantsLanguage.DATA_CORRUPTED_EXCEPTION);
         }
     }
 

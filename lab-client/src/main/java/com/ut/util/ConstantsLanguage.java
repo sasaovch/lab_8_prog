@@ -92,6 +92,7 @@ public final class ConstantsLanguage {
     public static final String DUBLICATE_USERNAME = "This username is already used";
     public static final String RELOAD = "reload";
     public static final String IOEXCEPTION = "IOException";
+    public static final String DATA_CORRUPTED_EXCEPTION = "Data is corrupted.";
     private ConstantsLanguage() {
         throw new UnsupportedOperationException();
     }

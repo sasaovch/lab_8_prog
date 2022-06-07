@@ -105,7 +105,8 @@ public class Resource_cat_CAT extends ListResourceBundle {
         {"Connection lost", "Connexió perduda"},
         {"Number format is wrong", "El format és erroni"},
         {"Error to connect to server", "Error en connectar al servidor"},
-        {"IOException", "IOException"}
+        {"IOException", "IOException"},
+        {"Data is corrupted.", "Les dades estan corrompudes"}
     };
 
 

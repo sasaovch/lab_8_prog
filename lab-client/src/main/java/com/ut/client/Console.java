@@ -11,9 +11,6 @@ import com.ut.common.util.IOManager;
 import com.ut.common.util.Message;
 import com.ut.util.ConstantsLanguage;
 
-import lombok.Getter;
-
-@Getter
 public class Console {
     private final IOManager ioManager;
     private final ReceiveManager receiveManager;

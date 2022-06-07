@@ -125,9 +125,9 @@ public final class ConnectionAndExecutorManager {
             if (Objects.nonNull(result)) {
                 return result;
             }
-            return new CommandResult("error", null, false, ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
+            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
         } catch (IOException e) {
-            return new CommandResult("error", null, false, ConstantsLanguage.IOEXCEPTION);
+            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, ConstantsLanguage.IOEXCEPTION);
         }
     }
 

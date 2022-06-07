@@ -56,6 +56,7 @@ public class TableViewJPanel extends JPanel {
 
     private JPanel northJPanel;
     private JPanel centerJPanel;
+    private JPanel argumentFilterJPanel;
 
     private JTextField fieldForHours;
     private JTextField fieldForMinutes;
@@ -96,13 +97,15 @@ public class TableViewJPanel extends JPanel {
     private void initElements() {
         centerJPanel = new JPanel();
         northJPanel = new JPanel();
+        argumentFilterJPanel = new JPanel();
+        filterValueFrame = new JFrame();
         resultOfOperationJLabel = new JLabel();
         resultOfOperationJLabel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
         resultOfOperationJLabel.setFont(Constants.SUB_FONT);
         initTableHeader();
         createJComboBox();
         getListOFSpaceMarine();
-
+        
         userJButton = new JButton();
         userJButton.setFont(Constants.MAIN_FONT);
         userJButton.setText((caeManager.getUsername()));
@@ -139,11 +142,10 @@ public class TableViewJPanel extends JPanel {
         setListenerForTypeOfViewBox();
         setListenerForSortOrFilterBox();
         setListenerForUserButton();
-        setListenerForSubmitButton();
         setSettingForLanguagesList();
         setSettingsForTable();
     }
-
+    
     private void initTableHeader() {
         tableHeader = new String[]{
             ConstantsLanguage.ID,
@@ -225,7 +227,7 @@ public class TableViewJPanel extends JPanel {
         northJPanel.add(listToChooseLanguage);
         northJPanel.add(userJButton);
     }
-
+    
     private void setSettingsForTable() {
         centerJPanel.removeAll();
         tableRows = ParsList.parseList(listForTable, resourceBundle);
@@ -249,7 +251,7 @@ public class TableViewJPanel extends JPanel {
         jTable.setFillsViewportHeight(true);
         centerJPanel.add(new JScrollPane(jTable));
     }
-
+    
     private void updateRow(int rowIndex) {
         Long id = Long.parseLong(tableRows[rowIndex][0]);
         SpaceMarine editSpaMar = null;
@@ -281,18 +283,16 @@ public class TableViewJPanel extends JPanel {
             subFrame.setVisible(true);
         }
     }
-
+    
     private void setSettingsForElements() {
-        filterValueFrame = createJFrameForFilterInput();
-        setListenerForArgumentJButton(filterValueFrame);
-        changeFieldsSpaceMarine = new ChangeFieldsSpaceMarine(guiManager, caeManager, resourceBundle);
+        changeFieldsSpaceMarine = new ChangeFieldsSpaceMarine(guiManager, caeManager, resourceBundle, true);
 
         northJPanel.setLayout(new FlowLayout(FlowLayout.LEFT, Constants.HGAP, Constants.VGAP));
         northJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.NORTH_PANEL_HEIGHT));
 
         centerJPanel.setBorder(BorderFactory.createEmptyBorder(Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP));
         centerJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
-
+        
         sortOrfilterJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
         fieldForSOFJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
         typeOfSortJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
@@ -301,8 +301,10 @@ public class TableViewJPanel extends JPanel {
 
         userJButton.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
         submitArgumentJButtonOperationJButon.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
+        setListenerForSubmitButton();
+        setListenerForArgumentJButton(filterValueFrame);
     }
-
+    
     private void setListenerForSortOrFilterBox() {
         sortOrfilterJComboBox.addActionListener(new ActionListener() {
             @Override
@@ -326,6 +328,7 @@ public class TableViewJPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (resourceBundle.getString(ConstantsLanguage.INPUT).equals(submitArgumentJButtonOperationJButon.getText())) {
+                    createJFrameForFilterInput();
                     filterValueFrame.setVisible(true);
                 } else {
                     try {
@@ -343,29 +346,29 @@ public class TableViewJPanel extends JPanel {
         });
     }
 
-    private JFrame createJFrameForFilterInput() {
-        JPanel panel = new JPanel();
+    private void createJFrameForFilterInput() {
+        argumentFilterJPanel.removeAll();
         argumentJLabel = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.ENTER_VALUE);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(argumentJLabel);
+        argumentFilterJPanel.setLayout(new BoxLayout(argumentFilterJPanel, BoxLayout.Y_AXIS));
+        argumentFilterJPanel.add(argumentJLabel);
         if (resourceBundle.getString(ConstantsLanguage.LOYAL).equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
-            panel.add(loyaJComboBox);
+            argumentFilterJPanel.add(loyaJComboBox);
         } else if (resourceBundle.getString(ConstantsLanguage.CATEGORY).equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
-            panel.add(categoryJComboBox);
+            argumentFilterJPanel.add(categoryJComboBox);
         } else if (resourceBundle.getString(ConstantsLanguage.CREATION_TIME).equals(fieldForSOFJComboBox.getSelectedItem().toString())) {
-            panel.add(jDateChooser);
-            panel.add(fieldForHours);
-            panel.add(fieldForMinutes);
-            panel.add(fieldForSeconds);
+            argumentFilterJPanel.add(jDateChooser);
+            argumentFilterJPanel.add(fieldForHours);
+            argumentFilterJPanel.add(fieldForMinutes);
+            argumentFilterJPanel.add(fieldForSeconds);
         } else {
             argumentJTextField = basicGUIElementsFabric.createBasicJTextField();
-            panel.add(argumentJTextField);
+            argumentFilterJPanel.add(argumentJTextField);
         }
-        JFrame frame = new JFrame();
-        panel.add(submitArgumentJButton);
-        frame.add(panel);
-        frame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
-        return frame;
+        argumentFilterJPanel.add(submitArgumentJButton);
+        filterValueFrame.add(argumentFilterJPanel);
+        filterValueFrame.setSize(new Dimension(Constants.POPUP_FRAME_WIDTH, Constants.POPUP_FRAME_HIGHT));
+        filterValueFrame.revalidate();
+        filterValueFrame.repaint();
     }
 
     private String findRightName(String bundleName) {
@@ -426,6 +429,7 @@ public class TableViewJPanel extends JPanel {
             Date result = calendarResult.getTime();
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             value = dateFormat.format(result);
+            returnStatus = true;
         }
         if (!returnStatus) {
             value = argumentJTextField.getText();

@@ -105,7 +105,8 @@ public class Resource_es_PR extends ListResourceBundle {
         {"Connection lost", "Se ha perdido la conexión"},
         {"Number format is wrong", "El formato de número es incorrecto"},
         {"Error to connect to server", "Error al conectarse al servidor"},
-        {"IOException", "IOException"}
+        {"IOException", "IOException"},
+        {"Data is corrupted.", "los datos están dañados."}
         };
 
 
