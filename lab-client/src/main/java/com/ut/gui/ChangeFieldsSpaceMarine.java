@@ -53,23 +53,22 @@ public class ChangeFieldsSpaceMarine extends JFrame {
                     printerror(ConstantsLanguage.INVALID_ARGUMENTS);
                 } else {
                     spaceMarine.setID(oldSpaceMarine.getID());
-                    CommandResult result = caeManager.executeCommand(ConstantsLanguage.UPDATE_COMMAND, spaceMarine, spaceMarine.getID());
-                    if (result.getResultStatus()) {
-                        System.out.println(result.getResultStatus());
-                        System.out.println(result.getMessageResult());
-                        SpaceMarine sp = (SpaceMarine) result.getData();
-                        System.out.println(sp);
-                        if (needToUpdateTable) {
-                            guiManager.addRowToTable((SpaceMarine)result.getData());
-                        }
-                        dispose();
-                    } else {
-                        printerror(result.getMessageResult());
-                        revalidate();
-                        repaint();
-                    }
+                    handleResult(caeManager.executeCommand(ConstantsLanguage.UPDATE_COMMAND, spaceMarine, spaceMarine.getID()));
                 }
         });
+    }
+
+    private void handleResult(CommandResult result) {
+        if (result.getResultStatus()) {
+            if (needToUpdateTable) {
+                guiManager.addRowToTable((SpaceMarine) result.getData());
+            }
+            dispose();
+        } else {
+            printerror(result.getMessageResult());
+            revalidate();
+            repaint();
+        }
     }
 
     private void initElements() {
@@ -84,14 +83,14 @@ public class ChangeFieldsSpaceMarine extends JFrame {
         add(centerJPanel, BorderLayout.CENTER);
         add(southJPanel, BorderLayout.SOUTH);
     }
-    
+
     private void printerror(String error) {
         errorJLabe.setText(resourceBundle.getString(error));
         southJPanel.add(errorJLabe);
         revalidate();
         repaint();
     }
-    
+
     public void showJFrame(SpaceMarine editSpaceMarine) {
         this.oldSpaceMarine = editSpaceMarine;
         addJPanel.initTextFields(oldSpaceMarine);

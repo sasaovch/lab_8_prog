@@ -258,7 +258,6 @@ public class SQLSpMarCollManager implements CollectionManager {
     @Override
     public ResultStatusWorkWithColl updateSpaceMarine(SpaceMarine newMarine, Long id) {
         if (!spaceMarineCollection.updateSpaceMarine(newMarine, id)) {
-            System.out.println("updateSpaceMarien");
             return ResultStatusWorkWithColl.False;
         }
         final int indexOfCoordId = 3;
@@ -279,21 +278,14 @@ public class SQLSpMarCollManager implements CollectionManager {
                 return ResultStatusWorkWithColl.False;
             }
             prepareStatCoord(statCoord, newMarine.getCoordinates());
-            // update old coordinates
             statCoord.setLong(indexOfCoordId, dataOfOldSpMar.getLong("coordinates"));
             statCoord.executeUpdate();
-            // set up new id coordinates
             newMarine.getCoordinates().setId(dataOfOldSpMar.getLong("coordinates"));
-            // check chapter is not null in new spaceMarine
             setChapterForUpdate(dataOfOldSpMar, newMarine, statChapter);
             newMarine.setTime(LocalDateTime.parse(dataOfOldSpMar.getString("creating_date_time"), formatter));
             prepareStatSpMar(statSpMar, newMarine);
             statSpMar.setLong(indexOfSpMarId, id);
             int count = statSpMar.executeUpdate();
-            if (count == 0) {
-                spaceMarineCollection.removeById(id);
-                return ResultStatusWorkWithColl.False;
-            }
             return ResultStatusWorkWithColl.True;
         } catch (SQLException e) {
             log.error("Failed to update spacemarine", e);

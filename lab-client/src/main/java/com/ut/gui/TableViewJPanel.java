@@ -105,7 +105,7 @@ public class TableViewJPanel extends JPanel {
         initTableHeader();
         createJComboBox();
         getListOFSpaceMarine();
-        
+
         userJButton = new JButton();
         userJButton.setFont(Constants.MAIN_FONT);
         userJButton.setText((caeManager.getUsername()));
@@ -145,7 +145,7 @@ public class TableViewJPanel extends JPanel {
         setSettingForLanguagesList();
         setSettingsForTable();
     }
-    
+
     private void initTableHeader() {
         tableHeader = new String[]{
             ConstantsLanguage.ID,
@@ -227,7 +227,7 @@ public class TableViewJPanel extends JPanel {
         northJPanel.add(listToChooseLanguage);
         northJPanel.add(userJButton);
     }
-    
+
     private void setSettingsForTable() {
         centerJPanel.removeAll();
         tableRows = ParsList.parseList(listForTable, resourceBundle);
@@ -251,7 +251,7 @@ public class TableViewJPanel extends JPanel {
         jTable.setFillsViewportHeight(true);
         centerJPanel.add(new JScrollPane(jTable));
     }
-    
+
     private void updateRow(int rowIndex) {
         Long id = Long.parseLong(tableRows[rowIndex][0]);
         SpaceMarine editSpaMar = null;
@@ -283,7 +283,7 @@ public class TableViewJPanel extends JPanel {
             subFrame.setVisible(true);
         }
     }
-    
+
     private void setSettingsForElements() {
         changeFieldsSpaceMarine = new ChangeFieldsSpaceMarine(guiManager, caeManager, resourceBundle, true);
 
@@ -292,7 +292,7 @@ public class TableViewJPanel extends JPanel {
 
         centerJPanel.setBorder(BorderFactory.createEmptyBorder(Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP, Constants.BORDER_GAP));
         centerJPanel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.CENTER_PANEL_HEIGHT));
-        
+
         sortOrfilterJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
         fieldForSOFJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
         typeOfSortJComboBox.setPreferredSize(new Dimension(Constants.COMBOX_WIDTH, Constants.COMBOX_HIGHT));
@@ -304,7 +304,7 @@ public class TableViewJPanel extends JPanel {
         setListenerForSubmitButton();
         setListenerForArgumentJButton(filterValueFrame);
     }
-    
+
     private void setListenerForSortOrFilterBox() {
         sortOrfilterJComboBox.addActionListener(new ActionListener() {
             @Override
