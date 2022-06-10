@@ -38,7 +38,7 @@ import java.util.Set;
 public class CoordinatesGraphics extends JComponent implements MouseListener, ActionListener {
     private static final long serialVersionUID = 1L;
     private static final int MAX_ALPHA = 255;
-    private static final int COUNTER_MAX = 100;
+    private static final int COUNTER_MAX = 150;
     private static final int AMOUNT_OF_PARTS = 10;
     private static final int MAX_COLOR_VALUE = 0xFFFFFF;
     private static final int BASIC_STROKE = 4;
@@ -167,6 +167,7 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
     }
 
     private void showSpaceMarines(Graphics2D g2) {
+        List<ShowSpaceMarine> removeList = new ArrayList<>();
         for (ShowSpaceMarine showingSpaceMarine : showSpaceMarineList) {
             Color color;
             SpaceMarine spaceMarine = showingSpaceMarine.spaceMarine;
@@ -182,45 +183,47 @@ public class CoordinatesGraphics extends JComponent implements MouseListener, Ac
                 }
             }
             showingSpaceMarine.tic++;
-            if (showingSpaceMarine.tic == COUNTER_MAX) {
-                showSpaceMarineList.remove(showingSpaceMarine);
-                showedList.add(showingSpaceMarine.spaceMarine);
-                return;
-            }
             color = usersAndColors.get(showingSpaceMarine.spaceMarine.getOwnerName());
             double gap = ((LINE_WIDHT + showingSpaceMarine.x) / COUNTER_MAX * showingSpaceMarine.tic) - LINE_WIDHT;
             drawSpaceMarine(g2, gap, showingSpaceMarine.y, showingSpaceMarine.health, color, MAX_ALPHA);
+            if (showingSpaceMarine.tic == COUNTER_MAX) {
+                removeList.add(showingSpaceMarine);
+                showedList.add(showingSpaceMarine.spaceMarine);
+            }
         }
+        showSpaceMarineList.removeAll(removeList);
     }
 
     private void removeSpaceMarines(Graphics2D g2) {
+        List<RemovingSpaceMarine> removeList = new ArrayList<>();
         for (RemovingSpaceMarine removingSpaceMarine : removeSpaceMarinesLIst) {
             Color color;
             removingSpaceMarine.tic++;
-            if (removingSpaceMarine.tic == COUNTER_MAX) {
-                removeSpaceMarinesLIst.remove(removingSpaceMarine);
-                showedList.remove(removingSpaceMarine.spaceMarine);
-                return;
-            }
             color = usersAndColors.get(removingSpaceMarine.spaceMarine.getOwnerName());
             double gap = (-(LINE_WIDHT + removingSpaceMarine.x) / COUNTER_MAX * removingSpaceMarine.tic) + removingSpaceMarine.x;
             drawSpaceMarine(g2, gap, removingSpaceMarine.y, (int) removingSpaceMarine.spaceMarine.getHealth(), color, MAX_ALPHA);
+            if (removingSpaceMarine.tic == COUNTER_MAX) {
+                removeList.add(removingSpaceMarine);
+                showedList.remove(removingSpaceMarine.spaceMarine);
+            }
         }
+        removeSpaceMarinesLIst.removeAll(removeList);
     }
 
     private void moveSpaceMarine(Graphics2D g2) {
+        List<MovingSpaceMarine> removeList = new ArrayList<>();
         for (MovingSpaceMarine movingSpaceMarine : moveSpaceMarineList) {
             movingSpaceMarine.tic++;
-            if (movingSpaceMarine.tic == COUNTER_MAX) {
-                moveSpaceMarineList.remove(movingSpaceMarine);
-                showedList.add(movingSpaceMarine.spaceMarine);
-                return;
-            }
             movingSpaceMarine.x += movingSpaceMarine.deltaX;
             movingSpaceMarine.y += movingSpaceMarine.deltaY;
             movingSpaceMarine.health += movingSpaceMarine.deltaHealth;
             drawSpaceMarine(g2, movingSpaceMarine.x, (long) movingSpaceMarine.y, movingSpaceMarine.health, usersAndColors.get(movingSpaceMarine.spaceMarine.getOwnerName()), MAX_ALPHA);
+            if (movingSpaceMarine.tic == COUNTER_MAX) {
+                removeList.add(movingSpaceMarine);
+                showedList.add(movingSpaceMarine.spaceMarine);
+            }
         }
+        moveSpaceMarineList.removeAll(removeList);
     }
 
     private void drawSpaceMarine(Graphics2D g2, double x, long y, int health, Color ownerColor, int alph) {

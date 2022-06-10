@@ -34,7 +34,7 @@ public class ReceiveManager {
             socket.receive(inPacket);
             return (CommandResult) deserialize(inPacket.getData());
         } catch (SocketTimeoutException e) {
-            return null;
+            return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
         } catch (ClassNotFoundException e) {
             return new CommandResult(ConstantsLanguage.ERROR_COMMAND, null, false, ConstantsLanguage.DATA_CORRUPTED_EXCEPTION);
         }

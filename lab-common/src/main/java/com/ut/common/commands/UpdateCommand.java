@@ -1,5 +1,7 @@
 package com.ut.common.commands;
 
+import java.util.Objects;
+
 import com.ut.common.data.SpaceMarine;
 import com.ut.common.data.User;
 import com.ut.common.util.AskerInformation;
@@ -27,7 +29,7 @@ public class UpdateCommand extends Command {
         }
         switch (collectionManager.updateSpaceMarine(newSpaceMarine, id)) {
             case True : return new CommandResult("update", newSpaceMarine, true, "Marine has been successfully updated.");
-            case False :  return new CommandResult("update", null, false, "Id is not correct or insufficient access rights or dublicated elements.");
+            case False : return new CommandResult("update", null, false, "Id is not correct or insufficient access rights or dublicated elements.");
             default :  return new CommandResult("update", null, false, "Database broke down.");
         }
     }
@@ -38,7 +40,11 @@ public class UpdateCommand extends Command {
             return null;
         }
         try {
-            return new BodyCommandWithSpMar(Long.parseLong(args[0]), AskerInformation.askMarine(ioManager));
+            SpaceMarine newSpMar = AskerInformation.askMarine(ioManager);
+            if (Objects.nonNull(newSpMar)) {
+                return new BodyCommandWithSpMar(Long.parseLong(args[0]), newSpMar);
+            }
+            return null;
         } catch (NumberFormatException e) {
             return null;
         }

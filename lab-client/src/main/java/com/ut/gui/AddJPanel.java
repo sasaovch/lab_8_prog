@@ -271,7 +271,7 @@ public class AddJPanel extends JPanel {
         } else {
             loyaJComboBox.setSelectedItem(resourceBundle.getString(ConstantsLanguage.FALSE));
         }
-        categoryJComboBox.setSelectedItem(spaceMarine.getCategory().toString().toUpperCase());
+        categoryJComboBox.setSelectedItem(resourceBundle.getString(spaceMarine.getCategory().toString().toLowerCase()));
         if (spaceMarine.getChapter() == null) {
             chapterField.setText(ConstantsLanguage.EMPTY_STRING);
             parentLegionField.setText(ConstantsLanguage.EMPTY_STRING);

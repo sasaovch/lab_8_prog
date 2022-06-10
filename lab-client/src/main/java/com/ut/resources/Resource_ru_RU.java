@@ -111,7 +111,8 @@ public class Resource_ru_RU extends ListResourceBundle {
             {"Number format is wrong", "Неверный формат"},
             {"Error to connect to server", "Ошибка подключения к серверу"},
             {"IOException", "IOException"},
-            {"Data is corrupted.", "Данные повреждены"}
+            {"Data is corrupted.", "Данные повреждены"},
+            {"Please, wait", "Please, wait"}
     };
 
     @Override

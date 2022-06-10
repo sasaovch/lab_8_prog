@@ -79,6 +79,7 @@ public class TableViewJPanel extends JPanel {
     private String[] tableHeader;
     private String[][] tableRows;
     private List<SpaceMarine> listForTable;
+    private int amoutnOfRows;
 
     private GUIManager guiManager;
     private ResourceBundle resourceBundle;
@@ -102,6 +103,7 @@ public class TableViewJPanel extends JPanel {
         resultOfOperationJLabel = new JLabel();
         resultOfOperationJLabel.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
         resultOfOperationJLabel.setFont(Constants.SUB_FONT);
+        amoutnOfRows = 0;
         initTableHeader();
         createJComboBox();
         getListOFSpaceMarine();
@@ -133,7 +135,7 @@ public class TableViewJPanel extends JPanel {
         typeOfSortJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.INCREASE, ConstantsLanguage.DECREASE});
         typeOfFilterJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.EQUALS, ConstantsLanguage.GREATER, ConstantsLanguage.LOWER});
         typeOfViewJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.TABLE_VIEW, ConstantsLanguage.VISUAL_VIEW, ConstantsLanguage.COMMAND_PANEL});
-        loyaJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.TRUE, ConstantsLanguage.FALSE, ConstantsLanguage.FALSE});
+        loyaJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.TRUE, ConstantsLanguage.FALSE, ConstantsLanguage.NULL});
         categoryJComboBox = basicGUIElementsFabric.createBasicComboBox(new String[]{ConstantsLanguage.AGGRESSOR, ConstantsLanguage.HELIX, ConstantsLanguage.TACTICAL, ConstantsLanguage.INCEPTOR});
     }
 
@@ -231,6 +233,7 @@ public class TableViewJPanel extends JPanel {
     private void setSettingsForTable() {
         centerJPanel.removeAll();
         tableRows = ParsList.parseList(listForTable, resourceBundle);
+        amoutnOfRows = tableRows.length;
         jTable = new JTable(tableRows, tableHeader) {
             private static final long serialVersionUID = 1L;
             @Override
@@ -243,13 +246,15 @@ public class TableViewJPanel extends JPanel {
             }
         };
         jTable.setVisible(true);
-        jTable.setPreferredScrollableViewportSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE, Constants.SCREEN_HEIGHT));
-        jTable.setPreferredSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE, Constants.SCREEN_HEIGHT));
+        jTable.setPreferredSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE, Constants.ROW_HEIGHT * amoutnOfRows));
         jTable.setFont(Constants.SUB_FONT);
         jTable.setRowHeight(Constants.ROW_HEIGHT);
         jTable.getTableHeader().setFont(Constants.SUB_FONT);
         jTable.setFillsViewportHeight(true);
-        centerJPanel.add(new JScrollPane(jTable));
+        jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        JScrollPane jScrollPane = new JScrollPane(jTable);
+        jScrollPane.setPreferredSize(new Dimension(Constants.RIGHT_OF_CENTER_SIZE, Constants.CENTER_PANEL_HEIGHT));
+        centerJPanel.add(jScrollPane);
     }
 
     private void updateRow(int rowIndex) {
@@ -263,10 +268,10 @@ public class TableViewJPanel extends JPanel {
         if (caeManager.getUsername().equals(editSpaMar.getOwnerName())) {
             changeFieldsSpaceMarine.showJFrame(editSpaMar);
         } else {
-            JFrame subFrame = new JFrame();
+            JFrame frameForInvalidRules = new JFrame();
             JPanel mainPanel = new JPanel();
             JLabel jLabel = basicGUIElementsFabric.createBasicLabel(ConstantsLanguage.NOT_YOUR_SPMAR_MESSAGE);
-            subFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            frameForInvalidRules.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
             mainPanel.add(jLabel);
             JButton exitButton = basicGUIElementsFabric.createBasicButton(ConstantsLanguage.OK);
@@ -275,12 +280,12 @@ public class TableViewJPanel extends JPanel {
             subPanel.setLayout(new GridBagLayout());
             subPanel.add(exitButton);
             mainPanel.add(subPanel);
-            exitButton.addActionListener(e1 -> subFrame.dispose());
-            subFrame.setContentPane(mainPanel);
-            subFrame.revalidate();
-            subFrame.pack();
-            subFrame.setLocationRelativeTo(null);
-            subFrame.setVisible(true);
+            exitButton.addActionListener(e1 -> frameForInvalidRules.dispose());
+            frameForInvalidRules.setContentPane(mainPanel);
+            frameForInvalidRules.revalidate();
+            frameForInvalidRules.pack();
+            frameForInvalidRules.setLocationRelativeTo(null);
+            frameForInvalidRules.setVisible(true);
         }
     }
 

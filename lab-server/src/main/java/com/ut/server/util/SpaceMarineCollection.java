@@ -121,6 +121,9 @@ public class SpaceMarineCollection {
     }
 
     public boolean updateSpaceMarine(SpaceMarine newMarine, Long id) {
+        if (!usedID.contains(id)) {
+            return false;
+        }
         SpaceMarine oldMarine = findByID(id);
         newMarine.setID(oldMarine.getID());
         newMarine.setTime(oldMarine.getCreationDateTime());

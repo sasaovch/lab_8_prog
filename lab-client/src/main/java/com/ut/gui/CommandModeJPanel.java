@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 import com.ut.client.ConnectionAndExecutorManager;
 import com.ut.commandsitems.CommandsItemsManager;
@@ -35,7 +36,7 @@ public class CommandModeJPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final JFileChooser executeScriptFileChooser = new JFileChooser();
+    private JFileChooser executeScriptFileChooser;
 
     private JComboBox<String> commandsJComboBox;
     private JComboBox<String> typeOfViewJComboBox;
@@ -102,7 +103,7 @@ public class CommandModeJPanel extends JPanel {
         argumentJPanel = new JPanel();
         argumentTextField = basicGUIElementsFabric.createBasicJTextField();
         argumentTextField.setEditable(false);
-
+        executeScriptFileChooser = new JFileChooser();
         initTextArea();
 
         setSettings();
@@ -150,11 +151,18 @@ public class CommandModeJPanel extends JPanel {
         executeScriptFileChooser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ExecutorScriptService executor = new ExecutorScriptService(caeManager, executeScriptFileChooser.getSelectedFile(), textResult);
-                executor.executeScript();
-                argumentJPanel.removeAll();
-                argumentJPanel.add(scrollText);
+                addScrollText();
+                addArgumentTextField();
                 guiManager.reloadMainScreen();
+                SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                    @Override
+                    public Void doInBackground() {
+                        ExecutorScriptService executor = new ExecutorScriptService(caeManager, executeScriptFileChooser.getSelectedFile(), textResult);
+                        executor.executeScript();
+                        return null;
+                    }
+                };
+                worker.execute();
             }
         });
     }
@@ -308,10 +316,12 @@ public class CommandModeJPanel extends JPanel {
     }
 
     public void addAddJPanel() {
+        argumentJPanel.removeAll();
         argumentJPanel.add(addJPanel);
     }
 
     public void addScrollText() {
+        argumentJPanel.removeAll();
         argumentJPanel.add(scrollText);
     }
 
@@ -324,6 +334,7 @@ public class CommandModeJPanel extends JPanel {
     }
 
     public void showExecuteScriptFileChooser() {
+        argumentJPanel.removeAll();
         argumentJPanel.add(executeScriptFileChooser);
     }
 

@@ -75,7 +75,10 @@ public final class FilterSpaceMarine {
                         Long valueMarinesCount = Long.parseLong(value);
                         returnlist = filterByMarinesCount(listSpaceMar, typeFilter, valueMarinesCount);
                         break;
-            default : returnlist = filterByWorld(listSpaceMar, typeFilter, value);
+            case "world" :
+                        returnlist = filterByWorld(listSpaceMar, typeFilter, value);
+                        break;
+            default : returnlist = filterByOwnerName(listSpaceMar, typeFilter, value);
         }
         return returnlist;
     }
@@ -326,5 +329,15 @@ public final class FilterSpaceMarine {
                 return x.getChapter().getWorld().compareTo(value) == 0;
             }
         }).collect(Collectors.toList());
+    }
+
+    public static List<SpaceMarine> filterByOwnerName(List<SpaceMarine> listSpaceMar, String typeFilter, String value) {
+        if ("lower".equals(typeFilter)) {
+            return listSpaceMar.stream().filter(x -> x.getOwnerName().compareTo(value) < 0).collect(Collectors.toList());
+        }
+        if ("greater".equals(typeFilter)) {
+            return listSpaceMar.stream().filter(x -> x.getOwnerName().compareTo(value) > 0).collect(Collectors.toList());
+        }
+        return listSpaceMar.stream().filter(x -> x.getOwnerName().compareTo(value) == 0).collect(Collectors.toList());
     }
 }

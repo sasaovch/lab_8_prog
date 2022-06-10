@@ -27,9 +27,7 @@ public class ExecutorScriptService {
         ioManager.turnOnFileMode(file.getAbsolutePath());
         Console console = new Console(ioManager, caeManager.getReceiveManager(), caeManager.getSendManager(), caeManager.getMessage());
         try {
-            while (console.isWorkState()) {
-                console.executeScript();
-            }
+            console.executeScript();
         } catch (IOException e) {
             e.printStackTrace();
         }

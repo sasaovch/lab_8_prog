@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.ut.common.commands.Command;
 import com.ut.common.commands.CommandManager;
+import com.ut.common.commands.CommandResult;
 import com.ut.common.util.BodyCommand;
 import com.ut.common.util.IOManager;
 import com.ut.common.util.Message;
@@ -50,15 +51,21 @@ public class Console {
                     message.setCommand(nameCommand);
                     message.setBodyCommand(bodyCommand);
                     sendManager.sendMessage(message);
-                    ioManager.println(receiveManager.receiveMessage().getMessageResult());
+                    CommandResult result = receiveManager.receiveMessage();
+                    if (ConstantsLanguage.ERROR_COMMAND.equals(result.getCommandName())) {
+                        ioManager.println(receiveManager.receiveMessage().getMessageResult());
+                        ioManager.turnOffFileMode();
+                    } else {
+                        ioManager.println(result.getMessageResult());
+                    }
                     continue;
                 }
+                ioManager.println(ConstantsLanguage.ERROR_IN_FILE_MESSAGE);
                 ioManager.turnOffFileMode();
                 if (!ioManager.getFileMode()) {
                     isWorkState = false;
                 }
             }
-            ioManager.println(ConstantsLanguage.ERROR_IN_FILE_MESSAGE);
         }
     }
 
@@ -76,10 +83,7 @@ public class Console {
 
     public boolean endFile(String line) {
         boolean endFile = false;
-        if (Objects.isNull(line)) {
-            ioManager.turnOffFileMode();
-            endFile = !ioManager.getFileMode();
-        } else if ("".equals(line.trim())) {
+        if (Objects.isNull(line) || ("".equals(line.trim()))) {
             ioManager.turnOffFileMode();
             endFile = !ioManager.getFileMode();
         }

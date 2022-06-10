@@ -1,5 +1,8 @@
 package com.ut.common.commands;
 
+import java.util.Objects;
+
+import com.ut.common.data.SpaceMarine;
 import com.ut.common.data.User;
 import com.ut.common.util.AskerInformation;
 import com.ut.common.util.BodyCommand;
@@ -33,6 +36,10 @@ public class RemoveLowerCommand extends Command {
         if (args.length != 0) {
             return null;
         }
-        return new BodyCommandWithSpMar(null, AskerInformation.askMarine(ioManager));
+        SpaceMarine newSpMar = AskerInformation.askMarine(ioManager);
+        if (Objects.nonNull(newSpMar)) {
+            return new BodyCommandWithSpMar(null, newSpMar);
+        }
+        return null;
     }
 }
