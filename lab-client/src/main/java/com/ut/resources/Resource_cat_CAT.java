@@ -19,7 +19,7 @@ public class Resource_cat_CAT extends ListResourceBundle {
         {"This username is already used", "Aquest nom d 'usuari ja s' usa"},
         {"yes", "SÍ"},
         {"no", "NO"},
-        {"Do you want exit?", "Vols sortir?"},
+        {"Do you want to exit?", "Vols sortir?"},
         {"id", "id"},
         {"name", "nom"},
         {"x", "x"},

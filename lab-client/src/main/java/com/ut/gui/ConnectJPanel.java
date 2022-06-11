@@ -122,8 +122,8 @@ public class ConnectJPanel extends JPanel {
                 guiManager.reloadMainScreen();
                 String address = addressJTextField.getText();
                 String port = portJTextField.getText();
-                // boolean answer = caeManager.connectToServer(address, port);
-                boolean answer = caeManager.connectToServer("localhost", "8713");
+                boolean answer = caeManager.connectToServer(address, port);
+                // boolean answer = caeManager.connectToServer("localhost", "8713");
                 if (!answer) {
                     printError(ConstantsLanguage.ERROR_TO_CONNECT_TO_SERVER);
                 } else {

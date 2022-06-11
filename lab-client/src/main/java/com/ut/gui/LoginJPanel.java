@@ -123,7 +123,7 @@ public class LoginJPanel extends JPanel {
                 String password = passwordJPasswordField.getText();
                 try {
                     // boolean answer = caeManager.login(username, password);
-                    boolean answer = caeManager.login("1", "1");
+                    boolean answer = caeManager.login(username, password);
                     if (!answer) {
                         printError(ConstantsLanguage.INCORRECT_DATA);
                     } else {

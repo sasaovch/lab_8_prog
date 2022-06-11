@@ -21,7 +21,7 @@ public class Resource_pt_PT extends ListResourceBundle {
         {"This username is already used", "Este nome de usuário já é usado"},
         {"yes", "SIM"},
         {"no", "Não"},
-        {"Do you want exit?", "Queres sair?"},
+        {"Do you want to exit?", "Queres sair?"},
         {"id", "ID"},
         {"name", "nome"},
         {"x", "x"},
